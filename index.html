@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
 <title>備餐分級手冊</title>
 <style>
   :root{
@@ -301,7 +308,7 @@
   .ai-msg{font-size:12.5px; color:var(--ink-muted); margin-top:10px;}
   .ai-msg.is-error{color:var(--rust);}
 
-  /* AI settings panel (bring-your-own-key fallback, 排菜 section) */
+  /* AI settings panel (bring-your-own-key, 排菜 section) */
   .ai-settings-panel{
     border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface-2);
     padding:14px 18px; margin-bottom:14px; box-shadow:var(--shadow-sm);
@@ -314,6 +321,7 @@
   }
   .ai-settings-status.is-warn{color:var(--rust); background:var(--rust-soft);}
   .ai-settings-panel .sub{margin:0 0 10px;}
+  .ai-settings-panel .sub a{color:var(--sage-ink); font-weight:700;}
   .ai-settings-bar{display:flex; flex-wrap:wrap; align-items:center; gap:10px;}
   .ai-settings-bar input[type="password"]{
     flex:1; min-width:200px; padding:8px 11px; border:1px solid var(--line); border-radius:10px;
@@ -454,6 +462,14 @@
   .result-panel{
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:20px 22px;
     box-shadow:var(--shadow-md); display:flex; flex-direction:column; gap:16px; position:sticky; top:78px;
+  }
+  @media (max-width:720px){
+    /* the sticky result panel only makes sense beside the calculator in the
+       two-column desktop layout (.calc-shell above) — once that collapses to
+       one column below 720px, keeping position:sticky here makes the panel
+       freeze partway down the page and overlap whatever scrolls under it on
+       phones, which is the main thing that made the mobile view feel broken. */
+    .result-panel{position:static; top:auto;}
   }
   .result-top{display:flex; justify-content:space-between; align-items:flex-end; gap:10px;}
   .result-total{font-size:30px; font-weight:700; color:var(--rust); line-height:1;}
@@ -845,11 +861,12 @@
         <span class="ai-settings-title">AI 設定</span>
         <span class="ai-settings-status" id="aiSettingsStatus">檢查中…</span>
       </div>
-      <p class="sub">「AI 食譜靈感」跟「做法提示改用 AI 生成」需要 AI 服務才能用。用有權限的 claude.ai 帳號開啟這個頁面時會自動使用平台內建的 AI，不用設定。如果不是（例如這個頁面被分享到別的網址開啟），可以在下面貼上你自己的 OpenAI API 金鑰——只會存在這台裝置、這個瀏覽器裡，不會傳給任何人，只會在你按下 AI 功能時直接送去 OpenAI。</p>
+      <p class="sub">「AI 食譜靈感」跟「做法提示改用 AI 生成」需要 AI 服務才能用。請貼上你自己的 Google Gemini API 金鑰——只會存在這台裝置、這個瀏覽器裡，不會傳給任何人，只會在你按下 AI 功能時直接從你的瀏覽器送去 Google，不會經過任何中間伺服器。</p>
+      <p class="sub">還沒有金鑰的話：到 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 用 Google 帳號登入、按「Create API key」就能免費拿到一組，免費額度不需要綁信用卡。室友要用的話，也是請她自己去申請一組、貼在她自己瀏覽器打開的這個頁面上，兩邊不會互相影響或共用額度。</p>
       <div class="ai-settings-bar">
-        <input type="password" id="openAiKeyInput" placeholder="貼上你的 OpenAI API 金鑰（sk-...）" autocomplete="off">
-        <button type="button" class="builder-btn" id="openAiKeySaveBtn">儲存</button>
-        <button type="button" class="builder-btn ghost" id="openAiKeyClearBtn">清除</button>
+        <input type="password" id="geminiKeyInput" placeholder="貼上你的 Gemini API 金鑰（AIza...）" autocomplete="off">
+        <button type="button" class="builder-btn" id="geminiKeySaveBtn">儲存</button>
+        <button type="button" class="builder-btn ghost" id="geminiKeyClearBtn">清除</button>
       </div>
       <div class="ai-settings-msg" id="aiSettingsMsg" hidden></div>
     </div>
@@ -2458,88 +2475,72 @@
     }catch(e){ return Promise.resolve(null); }
   }
 
-  // ---- Bring-your-own-key OpenAI fallback for the AI features ----
-  // When this page isn't running with the claude.ai platform's `sample` capability
-  // available (e.g. opened outside the artifact's owning organization, or hosted as
-  // a plain static page elsewhere), each viewer can paste their own OpenAI API key
-  // instead. The key is stored only in that browser's own localStorage and is only
-  // ever sent straight to AI_PROXY_URL (see below) with each request — never to any
-  // other server, and never persisted anywhere shared between viewers.
+  // ---- Bring-your-own-key Google Gemini fallback for the AI features ----
+  // This page is normally opened as a plain static page (e.g. GitHub Pages),
+  // where window.claude never exists, so each viewer pastes their own free
+  // Google Gemini API key (from aistudio.google.com/apikey — no credit card
+  // needed for the free tier) instead. The key is stored only in that
+  // browser's own localStorage and is only ever sent straight from that
+  // browser to Google's API with each request — never to any other server,
+  // and never persisted anywhere shared between viewers.
   //
-  // OpenAI's API does not send CORS headers, so a plain static page cannot call
-  // api.openai.com directly from the browser even with a valid key — every request
-  // has to go through a thin relay that adds the missing CORS headers. AI_PROXY_URL
-  // should point at that relay (see the accompanying Cloudflare Worker snippet).
-  // The relay is a dumb pass-through: it never sees, stores, or bills anything — it
-  // just forwards whatever Authorization header and body the caller already sent
-  // straight to OpenAI and relays the response back with CORS headers attached.
-  var AI_PROXY_URL = 'https://meal-ai-proxy.mika-wu.workers.dev';
-  var OPENAI_KEY_STORAGE = 'mealPlanOpenAiKey_v1';
-  var OPENAI_MODEL = 'gpt-6-luna';
+  // Unlike OpenAI's API, Google's Generative Language API does send CORS
+  // headers on its standard generateContent endpoint, so a plain static page
+  // can call it directly from the browser with just an API key — no relay
+  // server needed.
+  var GEMINI_KEY_STORAGE = 'mealPlanGeminiKey_v1';
+  var GEMINI_MODEL = 'gemini-3.8-flash';
+  var GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent';
 
-  function getOpenAiKey(){
-    try{ return (localStorage.getItem(OPENAI_KEY_STORAGE) || '').trim(); }catch(e){ return ''; }
+  function getGeminiKey(){
+    try{ return (localStorage.getItem(GEMINI_KEY_STORAGE) || '').trim(); }catch(e){ return ''; }
   }
-  function setOpenAiKey(key){
+  function setGeminiKey(key){
     try{
-      if(key) localStorage.setItem(OPENAI_KEY_STORAGE, key);
-      else localStorage.removeItem(OPENAI_KEY_STORAGE);
+      if(key) localStorage.setItem(GEMINI_KEY_STORAGE, key);
+      else localStorage.removeItem(GEMINI_KEY_STORAGE);
       return true;
     }catch(e){ return false; }
   }
 
-  // Wraps a direct OpenAI chat-completion call behind the same {json(prompt,opts)}
-  // shape the platform's `sample` capability exposes, so every existing call site
-  // written for claudeCapability('sample') keeps working unchanged against getAiSample().
-  function openAiSample(apiKey){
+  // Wraps a direct Gemini generateContent call behind the same {json(prompt)}
+  // shape the platform's `sample` capability exposes, so every existing call
+  // site written for claudeCapability('sample') keeps working unchanged.
+  function geminiSample(apiKey){
     return {
       json: function(prompt){
-        return fetch(AI_PROXY_URL, {
+        return fetch(GEMINI_ENDPOINT, {
           method: 'POST',
-          headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+apiKey},
+          headers: {'Content-Type':'application/json', 'x-goog-api-key': apiKey},
           body: JSON.stringify({
-            model: OPENAI_MODEL,
-            messages: [{role:'user', content: prompt}],
-            response_format: {type:'json_object'}
+            contents: [{parts: [{text: prompt}]}],
+            generationConfig: {responseFormat: {text: {mimeType: 'application/json'}}}
           })
         }).catch(function(networkErr){
-          // TEMPORARY DEBUG (see the matching comment further down): the fetch()
-          // call itself rejected — no HTTP response ever came back at all, so
-          // this is a browser/network-level failure in front of AI_PROXY_URL
-          // (blocked by CORS, blocked by this page's own sandboxed iframe CSP,
-          // DNS/connection failure, offline, etc.), not an OpenAI-side error.
-          // The browser deliberately hides the exact reason from JS for
-          // cross-origin requests (that's standard fetch() behavior, not
-          // something this page can bypass) — networkErr.message is usually
-          // just "Failed to fetch" — so pinpointing CORS vs. CSP vs. DNS needs
-          // a look at the browser's own DevTools Console/Network tab.
-          var err = new Error('network request to AI proxy failed');
-          err.code = 'proxy_unreachable';
-          err.detail = (networkErr && networkErr.message) || String(networkErr);
+          // the fetch() call itself rejected — no HTTP response ever came back,
+          // so this is a browser/network-level failure (offline, DNS, or this
+          // page's own sandboxed context blocking the request), not a Gemini
+          // API-side error.
+          var err = new Error('network request to Gemini failed');
+          err.code = 'network_error';
           throw err;
         }).then(function(res){
           if(!res.ok){
             return res.json().catch(function(){ return null; }).then(function(errBody){
-              var err = new Error('openai request failed');
-              if(res.status===401) err.code = 'openai_unauthorized';
-              else if(res.status===429) err.code = 'rate_limited';
-              else err.code = 'openai_error';
-              // TEMPORARY DEBUG (requested by mika to diagnose a BYOK setup issue —
-              // remove once resolved): status + OpenAI's own error message/type, so
-              // the viewer can tell auth vs. permission vs. billing vs. bad model
-              // apart from the UI. Never includes the API key itself — the key is
-              // only ever sent as a request header, never present anywhere in
-              // OpenAI's (or the proxy's) response body/status.
-              err.status = res.status;
-              err.detail = errBody && errBody.error && errBody.error.message;
-              err.openaiErrorType = errBody && errBody.error && errBody.error.type;
-              err.openaiErrorCode = errBody && errBody.error && errBody.error.code;
+              var err = new Error('gemini request failed');
+              var status = errBody && errBody.error && errBody.error.status;
+              if(res.status===400 || status==='INVALID_ARGUMENT') err.code = 'gemini_invalid_key';
+              else if(res.status===403 || status==='PERMISSION_DENIED') err.code = 'gemini_permission';
+              else if(res.status===429 || status==='RESOURCE_EXHAUSTED') err.code = 'rate_limited';
+              else err.code = 'gemini_error';
               throw err;
             });
           }
           return res.json();
         }).then(function(payload){
-          var content = payload && payload.choices && payload.choices[0] && payload.choices[0].message && payload.choices[0].message.content;
+          var content = payload && payload.candidates && payload.candidates[0] &&
+            payload.candidates[0].content && payload.candidates[0].content.parts &&
+            payload.candidates[0].content.parts[0] && payload.candidates[0].content.parts[0].text;
           if(!content){ var e1=new Error('empty'); e1.code='empty_completion'; throw e1; }
           try{ return JSON.parse(content); }
           catch(e){ var e2=new Error('bad json'); e2.code='invalid_json'; throw e2; }
@@ -2548,23 +2549,24 @@
     };
   }
 
-  // Unified AI resolver every call site should use instead of calling
-  // claudeCapability('sample') directly: tries the claude.ai platform capability
-  // first (automatic, no setup, for org members), then falls back to the viewer's
-  // own saved OpenAI key, then resolves null if neither is available.
+  // Unified AI resolver every call site uses: tries the claude.ai platform's
+  // `sample` capability first (free, automatic, no setup, only available when
+  // this page happens to be opened as a claude.ai artifact), then falls back
+  // to the viewer's own saved Gemini key, then resolves null if neither is
+  // available.
   function getAiSample(){
     return claudeCapability('sample').then(function(sample){
       if(sample) return sample;
-      var key = getOpenAiKey();
-      if(key) return openAiSample(key);
+      var key = getGeminiKey();
+      if(key) return geminiSample(key);
       return null;
     });
   }
 
-  // keeps the AI-dependent panels' visibility in sync with whatever AI backend is
-  // currently available — called on load and again whenever the viewer saves or
-  // clears their own OpenAI key, since that can change availability mid-session
-  // without a reload.
+  // keeps the AI-dependent panels' visibility in sync with whatever AI backend
+  // is currently available — called on load and again whenever the viewer
+  // saves or clears their own Gemini key, since that can change availability
+  // mid-session without a reload.
   function refreshAiAvailability(){
     getAiSample().then(function(sample){
       var available = !!sample;
@@ -2582,8 +2584,8 @@
       if(sample){
         statusEl.textContent = '目前使用平台內建 AI（免設定）';
         statusEl.classList.remove('is-warn');
-      } else if(getOpenAiKey()){
-        statusEl.textContent = '目前使用你儲存的 OpenAI 金鑰';
+      } else if(getGeminiKey()){
+        statusEl.textContent = '目前使用你儲存的 Gemini 金鑰';
         statusEl.classList.remove('is-warn');
       } else {
         statusEl.textContent = '尚未設定，AI 功能暫時關閉';
@@ -2601,15 +2603,15 @@
   }
 
   (function initAiSettings(){
-    var input = el('openAiKeyInput');
-    var saveBtn = el('openAiKeySaveBtn');
-    var clearBtn = el('openAiKeyClearBtn');
-    if(input && getOpenAiKey()) input.placeholder = '已儲存金鑰（重新貼上可覆蓋）';
+    var input = el('geminiKeyInput');
+    var saveBtn = el('geminiKeySaveBtn');
+    var clearBtn = el('geminiKeyClearBtn');
+    if(input && getGeminiKey()) input.placeholder = '已儲存金鑰（重新貼上可覆蓋）';
     if(saveBtn){
       saveBtn.addEventListener('click', function(){
         var val = input ? input.value.trim() : '';
         if(!val){ showAiSettingsMsg('請先貼上金鑰再儲存。', true); return; }
-        if(setOpenAiKey(val)){
+        if(setGeminiKey(val)){
           if(input){ input.value=''; input.placeholder = '已儲存金鑰（重新貼上可覆蓋）'; }
           showAiSettingsMsg('已儲存，AI 功能已開啟。');
           updateAiSettingsStatus();
@@ -2621,8 +2623,8 @@
     }
     if(clearBtn){
       clearBtn.addEventListener('click', function(){
-        setOpenAiKey('');
-        if(input){ input.value=''; input.placeholder = '貼上你的 OpenAI API 金鑰（sk-...）'; }
+        setGeminiKey('');
+        if(input){ input.value=''; input.placeholder = '貼上你的 Gemini API 金鑰（AIza...）'; }
         showAiSettingsMsg('已清除本機儲存的金鑰。');
         updateAiSettingsStatus();
         refreshAiAvailability();
@@ -3179,8 +3181,6 @@
         if(code!=='cancelled'){
           var baseMsg = (code && AI_ERROR_COPY[code]) || 'AI 做法提示產生失敗，';
           fallbackNote = baseMsg+'已改用簡易做法提示。';
-          var debugDetail = formatAiDebugDetail(e);
-          if(debugDetail) fallbackNote += '　' + debugDetail;
         }
       }).then(function(){
         drawAndSavePoster(data, fallbackNote);
@@ -3195,8 +3195,8 @@
     menuExportImgBtn.addEventListener('click', exportMenuPoster);
   }
   // AI-tip toggle row's visibility is kept in sync by refreshAiAvailability()
-  // (called on load and whenever the viewer saves/clears their own OpenAI key),
-  // so nothing to do here.
+  // (called on load and whenever the viewer saves/clears their own Gemini
+  // key), so nothing to do here.
 
   renderPlanList();
 
@@ -3519,43 +3519,11 @@
     not_declared:'這個頁面還沒開啟 AI 功能。',
     capability_disabled:'這個檢視模式無法使用 AI 功能。',
     capability_removed:'這個檢視模式無法使用 AI 功能。',
-    openai_unauthorized:'這組 OpenAI 金鑰無效或已失效，請到「AI 設定」確認金鑰是否正確。',
-    openai_error:'OpenAI 服務目前發生問題，請稍後再試一次。',
-    proxy_unreachable:'連不到轉發用的 Cloudflare Worker，請打開瀏覽器開發者工具的 Console／Network 分頁確認實際錯誤（常見原因：CORS、這個頁面本身的安全限制、Worker 網址打錯或沒在運作、網路離線）。'
+    network_error:'連不到 Google 的 AI 服務，請確認網路連線正常再試一次。',
+    gemini_invalid_key:'這組 Gemini 金鑰無效，請到上方「AI 設定」確認金鑰貼對了。',
+    gemini_permission:'這組 Gemini 金鑰沒有權限使用，請到 aistudio.google.com/apikey 確認金鑰狀態，或換一組新的金鑰。',
+    gemini_error:'Gemini 服務目前發生問題，請稍後再試一次。'
   };
-
-  // OpenAI's own "invalid_api_key" error message sometimes echoes back a
-  // masked fragment of the offending key for the caller's own recognition
-  // (e.g. "Incorrect API key provided: sk-THIS***c123") — that's on OpenAI's
-  // side, not something this page adds, but since no key material at all
-  // should reach the screen, defensively strip anything shaped like a key
-  // out of any text pulled from OpenAI's response before it's ever displayed.
-  function redactKeyLike(text){
-    if(!text) return text;
-    return String(text).replace(/sk-[A-Za-z0-9*_-]{4,}/g, '［已隱藏的金鑰片段］');
-  }
-
-  // TEMPORARY DEBUG HELPER (requested by mika to diagnose a BYOK setup issue —
-  // safe to delete this whole function, and its two call sites below, once
-  // resolved): turns the diagnostic fields openAiSample() attaches to its
-  // rejection (see the "TEMPORARY DEBUG" comment there) into one line of text
-  // appended after the normal canned error message, so the viewer can see the
-  // real HTTP status and OpenAI's own error type/message without opening
-  // DevTools. Deliberately only reads e.status / e.detail / e.openaiErrorType /
-  // e.openaiErrorCode — those are populated purely from OpenAI's response
-  // status and response BODY, never from the request the page itself sent, so
-  // the full API key can never appear here; e.detail still goes through
-  // redactKeyLike() as a second layer of defense against OpenAI's own masked
-  // fragment described above.
-  function formatAiDebugDetail(e){
-    if(!e || (typeof e.status==='undefined' && !e.detail && !e.openaiErrorType)) return '';
-    var parts = [];
-    parts.push('HTTP ' + (typeof e.status!=='undefined' ? e.status : '?'));
-    if(e.openaiErrorType) parts.push('type=' + e.openaiErrorType);
-    if(e.openaiErrorCode) parts.push('code=' + e.openaiErrorCode);
-    parts.push('message=' + redactKeyLike(e.detail || '(OpenAI 沒有回傳訊息內容)'));
-    return '［除錯用，之後會拿掉］' + parts.join('，');
-  }
 
   if(aiRecipeInput){
     aiRecipeInput.addEventListener('input', function(){ aiRecipeInput.classList.remove('is-invalid'); });
@@ -3605,7 +3573,7 @@
 
       getAiSample().then(function(sample){
         if(!sample){
-          showAiMsg('AI 功能目前無法使用，請到上方「AI 設定」貼上你自己的 OpenAI 金鑰，或用有權限的 claude.ai 帳號開啟這個頁面。', true);
+          showAiMsg('AI 功能目前無法使用，請到上方「AI 設定」貼上你自己的 Gemini API 金鑰。', true);
           return null;
         }
         var prompt = buildRecipePrompt(keyword);
@@ -3621,8 +3589,6 @@
         var code = e && e.code;
         if(code==='cancelled'){ showAiMsg(''); return; }
         var msg = (code && AI_ERROR_COPY[code]) || '生成失敗，請稍後再試一次。';
-        var debugDetail = formatAiDebugDetail(e);
-        if(debugDetail) msg += '　' + debugDetail;
         showAiMsg(msg, true);
       }).then(function(){
         aiRecipeBtn.disabled = false;
@@ -3631,11 +3597,14 @@
     });
   }
 
-  // aiRecipePanel's visibility is kept in sync by refreshAiAvailability() (called
-  // on load and whenever the viewer saves/clears their own OpenAI key), so nothing
-  // to do here.
+  // aiRecipePanel's visibility is kept in sync by refreshAiAvailability()
+  // (called on load and whenever the viewer saves/clears their own Gemini
+  // key), so nothing to do here.
 
   syncToggleUI();
   render();
 })();
 </script>
+
+</body>
+</html>
