@@ -2512,61 +2512,81 @@
     return String(text).replace(/AIza[0-9A-Za-z_-]{10,}|sk-[A-Za-z0-9_-]{10,}/g, '［已隱藏的金鑰片段］');
   }
 
+  function wait(ms){ return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
+
   // Wraps a direct Gemini generateContent call behind the same {json(prompt)}
   // shape the platform's `sample` capability exposes, so every existing call
   // site written for claudeCapability('sample') keeps working unchanged.
+  // Automatically retries a couple of times (short backoff) on a 503
+  // "model currently experiencing high demand" response — Google's own docs
+  // list 503 UNAVAILABLE as retriable, and it's a common, usually short-lived
+  // condition on the free tier, so it's worth absorbing before bothering the
+  // viewer with an error.
   function geminiSample(apiKey){
+    function attemptOnce(prompt){
+      return fetch(GEMINI_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'x-goog-api-key': apiKey},
+        body: JSON.stringify({
+          contents: [{parts: [{text: prompt}]}],
+          // JSON mode: generationConfig.responseMimeType is a flat field
+          // (NOT nested under a "responseFormat" object — an earlier
+          // version of this code sent it nested, which Gemini silently
+          // rejected as a bad request and got mis-shown to the viewer as
+          // "invalid key" instead of the real cause).
+          generationConfig: {responseMimeType: 'application/json'}
+        })
+      }).catch(function(networkErr){
+        // the fetch() call itself rejected — no HTTP response ever came back,
+        // so this is a browser/network-level failure (offline, DNS, or this
+        // page's own sandboxed context blocking the request), not a Gemini
+        // API-side error.
+        var err = new Error('network request to Gemini failed');
+        err.code = 'network_error';
+        throw err;
+      }).then(function(res){
+        if(!res.ok){
+          return res.json().catch(function(){ return null; }).then(function(errBody){
+            var err = new Error('gemini request failed');
+            var status = errBody && errBody.error && errBody.error.status;
+            if(res.status===403 || status==='PERMISSION_DENIED') err.code = 'gemini_permission';
+            else if(res.status===429 || status==='RESOURCE_EXHAUSTED') err.code = 'rate_limited';
+            else if(res.status===400 || status==='INVALID_ARGUMENT') err.code = 'gemini_bad_request';
+            else if(res.status===503 || status==='UNAVAILABLE') err.code = 'gemini_overloaded';
+            else err.code = 'gemini_error';
+            // Google's own error message (e.g. "API key not valid." or a
+            // bad-request reason) — shown alongside the canned message so
+            // a mismatch between our guessed code and the real cause is
+            // visible immediately instead of needing another round trip.
+            // Google doesn't echo key fragments in this text, but it goes
+            // through redactKeyLike() as a defensive second layer anyway.
+            err.status = res.status;
+            err.detail = errBody && errBody.error && errBody.error.message;
+            throw err;
+          });
+        }
+        return res.json();
+      }).then(function(payload){
+        var content = payload && payload.candidates && payload.candidates[0] &&
+          payload.candidates[0].content && payload.candidates[0].content.parts &&
+          payload.candidates[0].content.parts[0] && payload.candidates[0].content.parts[0].text;
+        if(!content){ var e1=new Error('empty'); e1.code='empty_completion'; throw e1; }
+        try{ return JSON.parse(content); }
+        catch(e){ var e2=new Error('bad json'); e2.code='invalid_json'; throw e2; }
+      });
+    }
     return {
       json: function(prompt){
-        return fetch(GEMINI_ENDPOINT, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json', 'x-goog-api-key': apiKey},
-          body: JSON.stringify({
-            contents: [{parts: [{text: prompt}]}],
-            // JSON mode: generationConfig.responseMimeType is a flat field
-            // (NOT nested under a "responseFormat" object — an earlier
-            // version of this code sent it nested, which Gemini silently
-            // rejected as a bad request and got mis-shown to the viewer as
-            // "invalid key" instead of the real cause).
-            generationConfig: {responseMimeType: 'application/json'}
-          })
-        }).catch(function(networkErr){
-          // the fetch() call itself rejected — no HTTP response ever came back,
-          // so this is a browser/network-level failure (offline, DNS, or this
-          // page's own sandboxed context blocking the request), not a Gemini
-          // API-side error.
-          var err = new Error('network request to Gemini failed');
-          err.code = 'network_error';
-          throw err;
-        }).then(function(res){
-          if(!res.ok){
-            return res.json().catch(function(){ return null; }).then(function(errBody){
-              var err = new Error('gemini request failed');
-              var status = errBody && errBody.error && errBody.error.status;
-              if(res.status===403 || status==='PERMISSION_DENIED') err.code = 'gemini_permission';
-              else if(res.status===429 || status==='RESOURCE_EXHAUSTED') err.code = 'rate_limited';
-              else if(res.status===400 || status==='INVALID_ARGUMENT') err.code = 'gemini_bad_request';
-              else err.code = 'gemini_error';
-              // Google's own error message (e.g. "API key not valid." or a
-              // bad-request reason) — shown alongside the canned message so
-              // a mismatch between our guessed code and the real cause is
-              // visible immediately instead of needing another round trip.
-              // Google doesn't echo key fragments in this text, but it goes
-              // through redactKeyLike() as a defensive second layer anyway.
-              err.status = res.status;
-              err.detail = errBody && errBody.error && errBody.error.message;
-              throw err;
-            });
-          }
-          return res.json();
-        }).then(function(payload){
-          var content = payload && payload.candidates && payload.candidates[0] &&
-            payload.candidates[0].content && payload.candidates[0].content.parts &&
-            payload.candidates[0].content.parts[0] && payload.candidates[0].content.parts[0].text;
-          if(!content){ var e1=new Error('empty'); e1.code='empty_completion'; throw e1; }
-          try{ return JSON.parse(content); }
-          catch(e){ var e2=new Error('bad json'); e2.code='invalid_json'; throw e2; }
-        });
+        var delays = [1200, 2500]; // ms — two retries beyond the first attempt
+        function tryAt(i){
+          return attemptOnce(prompt).catch(function(err){
+            if(err && err.code==='gemini_overloaded' && i < delays.length){
+              return wait(delays[i]).then(function(){ return tryAt(i+1); });
+            }
+            throw err;
+          });
+        }
+        return tryAt(0);
       }
     };
   }
@@ -3546,7 +3566,8 @@
     network_error:'連不到 Google 的 AI 服務，請確認網路連線正常再試一次。',
     gemini_bad_request:'這組 Gemini 金鑰可能無效，或這次請求的內容有問題，請到上方「AI 設定」確認金鑰貼對了（下面附上 Google 回覆的原因）。',
     gemini_permission:'這組 Gemini 金鑰沒有權限使用，請到 aistudio.google.com/apikey 確認金鑰狀態，或換一組新的金鑰。',
-    gemini_error:'Gemini 服務目前發生問題，請稍後再試一次。'
+    gemini_error:'Gemini 服務目前發生問題，請稍後再試一次。',
+    gemini_overloaded:'Google 這個 AI 模型目前使用量很大（已經自動重試過幾次），請等一下再試一次，通常過一陣子就會恢復。'
   };
 
   // Appends Google's own error message (from geminiSample()'s rejection) after
