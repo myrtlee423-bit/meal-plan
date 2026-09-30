@@ -2503,6 +2503,15 @@
     }catch(e){ return false; }
   }
 
+  // strips anything shaped like an API key (Google's "AIza..." or the
+  // "sk-..." shape other providers use) out of text before it's ever shown
+  // on screen — defense in depth in case an error message ever echoes back
+  // a key fragment, even though Google's own error text normally doesn't.
+  function redactKeyLike(text){
+    if(!text) return text;
+    return String(text).replace(/AIza[0-9A-Za-z_-]{10,}|sk-[A-Za-z0-9_-]{10,}/g, '［已隱藏的金鑰片段］');
+  }
+
   // Wraps a direct Gemini generateContent call behind the same {json(prompt)}
   // shape the platform's `sample` capability exposes, so every existing call
   // site written for claudeCapability('sample') keeps working unchanged.
@@ -2514,7 +2523,12 @@
           headers: {'Content-Type':'application/json', 'x-goog-api-key': apiKey},
           body: JSON.stringify({
             contents: [{parts: [{text: prompt}]}],
-            generationConfig: {responseFormat: {text: {mimeType: 'application/json'}}}
+            // JSON mode: generationConfig.responseMimeType is a flat field
+            // (NOT nested under a "responseFormat" object — an earlier
+            // version of this code sent it nested, which Gemini silently
+            // rejected as a bad request and got mis-shown to the viewer as
+            // "invalid key" instead of the real cause).
+            generationConfig: {responseMimeType: 'application/json'}
           })
         }).catch(function(networkErr){
           // the fetch() call itself rejected — no HTTP response ever came back,
@@ -2529,10 +2543,18 @@
             return res.json().catch(function(){ return null; }).then(function(errBody){
               var err = new Error('gemini request failed');
               var status = errBody && errBody.error && errBody.error.status;
-              if(res.status===400 || status==='INVALID_ARGUMENT') err.code = 'gemini_invalid_key';
-              else if(res.status===403 || status==='PERMISSION_DENIED') err.code = 'gemini_permission';
+              if(res.status===403 || status==='PERMISSION_DENIED') err.code = 'gemini_permission';
               else if(res.status===429 || status==='RESOURCE_EXHAUSTED') err.code = 'rate_limited';
+              else if(res.status===400 || status==='INVALID_ARGUMENT') err.code = 'gemini_bad_request';
               else err.code = 'gemini_error';
+              // Google's own error message (e.g. "API key not valid." or a
+              // bad-request reason) — shown alongside the canned message so
+              // a mismatch between our guessed code and the real cause is
+              // visible immediately instead of needing another round trip.
+              // Google doesn't echo key fragments in this text, but it goes
+              // through redactKeyLike() as a defensive second layer anyway.
+              err.status = res.status;
+              err.detail = errBody && errBody.error && errBody.error.message;
               throw err;
             });
           }
@@ -3181,6 +3203,8 @@
         if(code!=='cancelled'){
           var baseMsg = (code && AI_ERROR_COPY[code]) || 'AI 做法提示產生失敗，';
           fallbackNote = baseMsg+'已改用簡易做法提示。';
+          var errDetail = formatAiErrorDetail(e);
+          if(errDetail) fallbackNote += errDetail;
         }
       }).then(function(){
         drawAndSavePoster(data, fallbackNote);
@@ -3520,10 +3544,24 @@
     capability_disabled:'這個檢視模式無法使用 AI 功能。',
     capability_removed:'這個檢視模式無法使用 AI 功能。',
     network_error:'連不到 Google 的 AI 服務，請確認網路連線正常再試一次。',
-    gemini_invalid_key:'這組 Gemini 金鑰無效，請到上方「AI 設定」確認金鑰貼對了。',
+    gemini_bad_request:'這組 Gemini 金鑰可能無效，或這次請求的內容有問題，請到上方「AI 設定」確認金鑰貼對了（下面附上 Google 回覆的原因）。',
     gemini_permission:'這組 Gemini 金鑰沒有權限使用，請到 aistudio.google.com/apikey 確認金鑰狀態，或換一組新的金鑰。',
     gemini_error:'Gemini 服務目前發生問題，請稍後再試一次。'
   };
+
+  // Appends Google's own error message (from geminiSample()'s rejection) after
+  // the canned Chinese message above, so if the canned code ever guesses wrong,
+  // the real reason is visible immediately instead of needing another guess-and-
+  // report round trip. Only reads e.status / e.detail, which come purely from
+  // Gemini's response status/body — never from the request this page sent — so
+  // the API key itself can never appear here; e.detail still goes through
+  // redactKeyLike() as a second layer of defense.
+  function formatAiErrorDetail(e){
+    if(!e || (typeof e.status==='undefined' && !e.detail)) return '';
+    var parts = ['HTTP ' + (typeof e.status!=='undefined' ? e.status : '?')];
+    parts.push('Google 訊息：' + redactKeyLike(e.detail || '（沒有回傳訊息內容）'));
+    return '（' + parts.join('，') + '）';
+  }
 
   if(aiRecipeInput){
     aiRecipeInput.addEventListener('input', function(){ aiRecipeInput.classList.remove('is-invalid'); });
@@ -3589,6 +3627,8 @@
         var code = e && e.code;
         if(code==='cancelled'){ showAiMsg(''); return; }
         var msg = (code && AI_ERROR_COPY[code]) || '生成失敗，請稍後再試一次。';
+        var errDetail = formatAiErrorDetail(e);
+        if(errDetail) msg += '　' + errDetail;
         showAiMsg(msg, true);
       }).then(function(){
         aiRecipeBtn.disabled = false;
