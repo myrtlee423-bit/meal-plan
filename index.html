@@ -1,0 +1,3641 @@
+<title>備餐分級手冊</title>
+<style>
+  :root{
+    --bg:#F8FAFC; --surface:#FFFFFF; --surface-2:#F1F5F9;
+    --ink:#0F172A; --ink-muted:#64748B; --line:#E2E8F0;
+    --sage:#0D9488; --sage-soft:#CCFBF1; --sage-ink:#115E59;
+    --rust:#E11D48; --rust-soft:#FFE4E6;
+    --tier-xs:#475569; --tier-xs-ink:#FFFFFF;
+    --tier-s:#0284C7;  --tier-s-ink:#FFFFFF;
+    --tier-m:#0D9488;  --tier-m-ink:#FFFFFF;
+    --tier-l:#D97706;  --tier-l-ink:#FFFFFF;
+    --tier-xl:#7C3AED; --tier-xl-ink:#FFFFFF;
+    --missing:#F1F5F9; --missing-ink:#94A3B8;
+    --warn-bg:#FEF3C7; --warn-ink:#B45309; --warn-border:#FCD34D;
+    --ok-bg:#DCFCE7; --ok-ink:#15803D; --ok-border:#86EFAC;
+    --shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
+    --shadow-md:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
+    --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+    --radius-sm:8px; --radius-md:13px; --radius-lg:18px;
+    --shadow: var(--shadow-sm);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B0F17; --surface:#151D2A; --surface-2:#1E293B;
+      --ink:#F8FAFC; --ink-muted:#94A3B8; --line:#334155;
+      --sage:#14B8A6; --sage-soft:#134E4A; --sage-ink:#5EEAD4;
+      --rust:#FB7185; --rust-soft:#4C0519;
+      --tier-xs:#64748B; --tier-xs-ink:#FFFFFF;
+      --tier-s:#0EA5E9;  --tier-s-ink:#0B1220;
+      --tier-m:#14B8A6;  --tier-m-ink:#0B1220;
+      --tier-l:#F59E0B;  --tier-l-ink:#0B1220;
+      --tier-xl:#A78BFA; --tier-xl-ink:#0B1220;
+      --missing:#1E293B; --missing-ink:#64748B;
+      --warn-bg:#451A03; --warn-ink:#FCD34D; --warn-border:#78350F;
+      --ok-bg:#064E3B; --ok-ink:#86EFAC; --ok-border:#065F46;
+      --shadow-sm:0 1px 2px 0 rgba(0,0,0,.3);
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,.4);
+      --shadow-lg:0 10px 25px -5px rgba(0,0,0,.5);
+      --shadow: var(--shadow-sm);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B0F17; --surface:#151D2A; --surface-2:#1E293B;
+    --ink:#F8FAFC; --ink-muted:#94A3B8; --line:#334155;
+    --sage:#14B8A6; --sage-soft:#134E4A; --sage-ink:#5EEAD4;
+    --rust:#FB7185; --rust-soft:#4C0519;
+    --tier-xs:#64748B; --tier-xs-ink:#FFFFFF;
+    --tier-s:#0EA5E9;  --tier-s-ink:#0B1220;
+    --tier-m:#14B8A6;  --tier-m-ink:#0B1220;
+    --tier-l:#F59E0B;  --tier-l-ink:#0B1220;
+    --tier-xl:#A78BFA; --tier-xl-ink:#0B1220;
+    --missing:#1E293B; --missing-ink:#64748B;
+    --warn-bg:#451A03; --warn-ink:#FCD34D; --warn-border:#78350F;
+    --ok-bg:#064E3B; --ok-ink:#86EFAC; --ok-border:#065F46;
+    --shadow-sm:0 1px 2px 0 rgba(0,0,0,.3);
+    --shadow-md:0 4px 6px -1px rgba(0,0,0,.4);
+    --shadow-lg:0 10px 25px -5px rgba(0,0,0,.5);
+    --shadow: var(--shadow-sm);
+  }
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  button:focus-visible, a:focus-visible, input:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Plus Jakarta Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    padding-inline:20px; padding-block:28px 64px;
+    font-size:15px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; font-weight:700; text-wrap:balance; margin:0;}
+  .num{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums;}
+
+  .wrap{max-width:920px; margin-inline:auto; padding-top:32px; display:flex; flex-direction:column; gap:52px;}
+
+  section{display:flex; flex-direction:column; gap:16px;}
+  @media (max-width:640px){
+    .wrap{gap:40px; padding-top:22px;}
+  }
+  .section-head{display:flex; flex-direction:column; gap:6px; padding-bottom:14px; border-bottom:1px solid var(--line);}
+  .section-head h2{font-size:19px; font-weight:700;}
+  .section-head .sub{color:var(--ink-muted); font-size:13.5px; max-width:64ch;}
+
+  /* collapsible "more detail" reveal, used to keep primary copy short */
+  details.more{margin-top:2px;}
+  details.more summary{
+    cursor:pointer; font-size:12px; font-weight:700; color:var(--sage);
+    list-style:none; display:inline-flex; align-items:center; gap:4px; user-select:none;
+  }
+  details.more summary::-webkit-details-marker{display:none;}
+  details.more summary::before{content:"▸"; font-size:9px; display:inline-block; transition:transform .15s ease;}
+  details.more[open] summary::before{transform:rotate(90deg);}
+  details.more summary:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+  details.more .more-body{margin-top:6px; color:var(--ink-muted); font-size:13px; max-width:64ch; line-height:1.6;}
+  .section-tag{
+    font-size:11.5px; letter-spacing:.14em; color:var(--sage); font-weight:700;
+  }
+
+  /* tier colors (reused by tabs) */
+  .tier-xs{background:var(--tier-xs); color:var(--tier-xs-ink);}
+  .tier-s{background:var(--tier-s); color:var(--tier-s-ink);}
+  .tier-m{background:var(--tier-m); color:var(--tier-m-ink);}
+  .tier-l{background:var(--tier-l); color:var(--tier-l-ink);}
+  .tier-xl{background:var(--tier-xl); color:var(--tier-xl-ink);}
+
+  /* table */
+  .table-scroll{overflow-x:auto;}
+  table{width:100%; border-collapse:collapse; min-width:640px; font-size:13.6px;}
+  thead th{
+    text-align:left; padding:11px 14px; background:var(--surface-2); color:var(--ink-muted);
+    font-weight:600; font-size:12px; letter-spacing:.02em; border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--sage-soft);}
+  td.name{font-weight:600; white-space:nowrap;}
+  td.note{color:var(--ink-muted); font-size:12.5px;}
+  .price{font-weight:600;}
+  .badge{display:inline-flex; align-items:center; justify-content:center; min-width:34px; padding:3px 8px; border-radius:6px; font-size:12px; font-weight:700;}
+  .missing-badge{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:6px; background:var(--missing); color:var(--missing-ink); font-size:12px; font-weight:600;}
+  .missing-badge::before{content:"—"; font-weight:700;}
+  .suggest-badge{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:6px; border:1px dashed var(--ink-muted); color:var(--ink-muted); font-size:11px; font-weight:600; white-space:nowrap;}
+  .suggest-badge::before{content:"?"; font-weight:800;}
+  .item-card.is-suggested{border-style:dashed;}
+
+  /* tier tabs — price chip and tab picker merged into one row */
+  .tab-row{display:flex; flex-wrap:wrap; gap:9px;}
+  .tab-btn{
+    appearance:none; border:1px solid var(--line); cursor:pointer; font-family:inherit;
+    display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+    background:var(--surface); color:var(--ink);
+    padding:9px 16px; border-radius:999px; font-size:13.5px; font-weight:700; letter-spacing:.01em;
+    box-shadow:var(--shadow-sm); transition:border-color .15s ease, background .15s ease, box-shadow .2s ease, transform .2s ease;
+  }
+  .tab-btn .tab-dot{width:10px; height:10px; border-radius:50%; flex:none;}
+  .tab-btn .tab-amt{font-size:12px; font-weight:600; opacity:.7;}
+  .tab-btn:hover{border-color:var(--sage); background:var(--sage-soft); color:var(--sage-ink); transform:translateY(-1px); box-shadow:var(--shadow-md);}
+  .tab-btn.is-active{border-color:var(--ink); background:var(--surface-2); color:var(--ink); box-shadow:var(--shadow-md); transform:translateY(-1px);}
+  .tab-btn:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+
+  /* combo cards */
+  .combo-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px;}
+  .combo-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:14px 16px;
+    display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-sm);
+    transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .combo-card:hover{box-shadow:var(--shadow-md); border-color:var(--sage); transform:translateY(-2px);}
+  .combo-card .ctitle{font-weight:700; font-size:14px;}
+  .combo-card.is-editable .ctitle{padding-right:52px;}
+  .combo-card.is-editable{cursor:pointer;}
+  .combo-card.is-editable .cdel, .combo-card.is-editable .cedit{cursor:pointer;}
+  .combo-card .citems{color:var(--ink-muted); font-size:12.8px; line-height:1.55;}
+  .combo-card .cfoot{display:flex; justify-content:space-between; align-items:baseline; margin-top:auto; padding-top:8px; border-top:1px dashed var(--line);}
+  .combo-card .cprice{font-size:17px; font-weight:700; color:var(--rust);}
+  .combo-card .cflag{font-size:11px; color:var(--ink-muted); background:var(--surface-2); padding:2px 7px; border-radius:6px;}
+  .combo-card .capply, .item-card .iapply{
+    appearance:none; border:1px solid var(--sage); background:transparent; color:var(--sage);
+    font-family:inherit; font-size:11.5px; font-weight:700; padding:6px 10px; border-radius:999px;
+    cursor:pointer; margin-top:2px; align-self:flex-start;
+  }
+  .combo-card .capply:hover, .item-card .iapply:hover{background:var(--sage); color:#FFFFFF;}
+
+  /* item cards — protein / staple picks, replacing plain table rows */
+  .item-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px;}
+  .item-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:14px 16px;
+    display:flex; flex-direction:column; gap:5px; box-shadow:var(--shadow-sm);
+    transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .item-card:hover{box-shadow:var(--shadow-md); border-color:var(--sage); transform:translateY(-2px);}
+  .item-card .iname{font-weight:700; font-size:14.5px;}
+  .item-card .isource, .item-card .ispec{color:var(--ink-muted); font-size:12px; line-height:1.5;}
+  .item-card .inote{color:var(--ink-muted); font-size:11.5px; line-height:1.55; margin-top:1px;}
+  .item-card .ifoot{
+    display:flex; justify-content:space-between; align-items:baseline; margin-top:auto;
+    padding-top:8px; border-top:1px dashed var(--line);
+  }
+  .item-card .iprice{font-size:16px; font-weight:700; color:var(--rust);}
+  .item-card.is-missing .ifoot{border-top:none; padding-top:2px;}
+  .combo-card{position:relative;}
+  .combo-card .cdel, .combo-card .cedit{
+    position:absolute; top:8px; width:20px; height:20px; border-radius:50%; border:none;
+    background:var(--surface-2); color:var(--ink-muted); font-size:12.5px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .combo-card .cdel{right:8px;}
+  .combo-card .cedit{right:32px;}
+  .combo-card .cdel:hover{background:var(--rust-soft); color:var(--rust);}
+  .combo-card .cedit:hover{background:var(--sage-soft); color:var(--sage);}
+
+  /* edit-state banner */
+  .edit-banner{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    padding:10px 14px; border-radius:10px; background:var(--sage-soft); color:var(--sage-ink); font-size:13px;
+  }
+  .edit-banner b{font-weight:700;}
+  .edit-banner[hidden]{display:none;}
+  .edit-banner button{
+    appearance:none; border:1px solid var(--sage); background:transparent; color:var(--sage-ink);
+    font-family:inherit; font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px; cursor:pointer;
+  }
+  .edit-banner button:hover{background:var(--sage); color:#FFFFFF;}
+
+  /* vegetable price builder */
+  .veg-builder{border:1px solid var(--line); border-radius:var(--radius-lg); background:var(--surface); box-shadow:var(--shadow-sm); overflow:hidden;}
+  .veg-builder .table-scroll{border:none; border-radius:0; box-shadow:none; max-height:360px; overflow-y:auto;}
+  .veg-builder table{min-width:520px;}
+  .veg-builder thead th{position:sticky; top:0; z-index:2; padding:0;}
+  .sort-th{
+    appearance:none; border:none; background:none; cursor:pointer; font-family:inherit;
+    color:inherit; font-weight:inherit; font-size:inherit; letter-spacing:inherit;
+    display:flex; align-items:center; gap:4px; width:100%; padding:11px 14px; text-align:left;
+  }
+  .sort-th:hover{color:var(--ink);}
+  .sort-th:focus-visible{outline:2px solid var(--sage); outline-offset:-2px;}
+  .sort-ind{font-size:10px; opacity:.55; width:8px;}
+  .sort-th.is-active .sort-ind{opacity:1; color:var(--sage);}
+  .veg-check{width:16px; height:16px; accent-color:var(--sage); cursor:pointer;}
+  tbody tr.is-checked{background:var(--sage-soft);}
+  .builder-bar{
+    display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:12px 14px;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+    background:var(--surface-2); border-top:1px solid var(--line);
+    border-radius:0 0 16px 16px;
+    position:sticky; bottom:0; z-index:3;
+    box-shadow:0 -6px 14px -10px rgba(20,24,16,.35);
+  }
+  .builder-summary{font-size:12.8px; color:var(--ink-muted); white-space:nowrap;}
+  .builder-summary b{color:var(--ink);}
+  .builder-bar input[type="text"]{
+    flex:1; min-width:160px; padding:8px 11px; border:1px solid var(--line); border-radius:10px;
+    background:var(--surface); color:var(--ink); font-family:inherit; font-size:13px;
+  }
+  .builder-bar input[type="text"]:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .builder-bar input.is-invalid{border-color:var(--rust); border-width:2px;}
+  .builder-btn{
+    appearance:none; border:1px solid var(--sage); background:var(--sage); color:#FFFFFF;
+    font-family:inherit; font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:999px; cursor:pointer;
+    box-shadow:var(--shadow-sm); transition:opacity .2s ease, transform .15s ease;
+  }
+  .builder-btn:hover:not(:disabled){opacity:.9; transform:translateY(-1px);}
+  .builder-btn:disabled{opacity:.4; cursor:not-allowed;}
+  .builder-btn.ghost{background:transparent; color:var(--ink-muted); border-color:var(--line);}
+
+  /* saved meal plans panel (排菜 section) */
+  .plan-panel{
+    border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface);
+    padding:16px 18px; margin-bottom:18px; box-shadow:var(--shadow-sm);
+  }
+  .plan-panel h3{margin:0 0 4px; font-size:15px;}
+  .plan-panel .sub{margin:0 0 12px;}
+  .plan-bar{display:flex; flex-wrap:wrap; align-items:center; gap:10px;}
+  .plan-bar input[type="text"]{
+    flex:1; min-width:160px; padding:8px 11px; border:1px solid var(--line); border-radius:10px;
+    background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13px;
+  }
+  .plan-bar input[type="text"]:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .plan-bar input.is-invalid{border-color:var(--rust); border-width:2px;}
+  .poster-opt-row{margin-top:8px;}
+  .poster-ai-toggle{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-muted);
+    cursor:pointer; user-select:none;
+  }
+  .poster-ai-toggle input[type="checkbox"]{margin:0; accent-color:var(--sage);}
+  .plan-msg{font-size:12.5px; color:var(--sage-ink); margin-top:8px;}
+  .plan-msg.is-error{color:var(--rust);}
+  .plan-list{display:flex; flex-direction:column; gap:8px; margin-top:12px;}
+  .plan-row{
+    display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--surface-2);
+  }
+  .plan-row-main{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .plan-row-name{font-weight:700; font-size:13.5px;}
+  .plan-row-meta{font-size:11.5px; color:var(--ink-muted);}
+  .plan-row-actions{display:flex; gap:6px; flex-wrap:wrap;}
+  .plan-row-btn{
+    appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+    font-family:inherit; font-size:12px; font-weight:700; padding:6px 12px; border-radius:999px; cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .plan-row-btn:hover{border-color:var(--sage); background:var(--sage-soft); color:var(--sage-ink);}
+  .plan-row-btn.is-danger:hover{border-color:var(--rust); background:var(--rust-soft); color:var(--rust);}
+  .plan-empty{font-size:12.5px; color:var(--ink-muted); padding:8px 2px;}
+
+  /* AI recipe suggestion panel (排菜 section) */
+  .ai-panel{
+    border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface);
+    padding:16px 18px; margin-bottom:18px; box-shadow:var(--shadow-sm);
+  }
+  .ai-panel h3{margin:0 0 4px; font-size:15px;}
+  .ai-panel .sub{margin:0 0 12px;}
+  .ai-bar{display:flex; flex-wrap:wrap; align-items:center; gap:10px;}
+  .ai-bar input[type="text"]{
+    flex:1; min-width:180px; padding:8px 11px; border:1px solid var(--line); border-radius:10px;
+    background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13px;
+  }
+  .ai-bar input[type="text"]:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .ai-bar input.is-invalid{border-color:var(--rust); border-width:2px;}
+  .ai-msg{font-size:12.5px; color:var(--ink-muted); margin-top:10px;}
+  .ai-msg.is-error{color:var(--rust);}
+
+  /* AI settings panel (bring-your-own-key fallback, 排菜 section) */
+  .ai-settings-panel{
+    border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface-2);
+    padding:14px 18px; margin-bottom:14px; box-shadow:var(--shadow-sm);
+  }
+  .ai-settings-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
+  .ai-settings-title{font-weight:700; font-size:13.5px;}
+  .ai-settings-status{
+    font-size:11.5px; font-weight:700; color:var(--sage-ink); background:var(--sage-soft);
+    padding:3px 10px; border-radius:999px;
+  }
+  .ai-settings-status.is-warn{color:var(--rust); background:var(--rust-soft);}
+  .ai-settings-panel .sub{margin:0 0 10px;}
+  .ai-settings-bar{display:flex; flex-wrap:wrap; align-items:center; gap:10px;}
+  .ai-settings-bar input[type="password"]{
+    flex:1; min-width:200px; padding:8px 11px; border:1px solid var(--line); border-radius:10px;
+    background:var(--surface); color:var(--ink); font-family:inherit; font-size:13px;
+  }
+  .ai-settings-bar input[type="password"]:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .ai-settings-msg{font-size:12.5px; color:var(--sage-ink); margin-top:8px;}
+  .ai-settings-msg.is-error{color:var(--rust);}
+  .ai-result{margin-top:14px; display:flex; flex-direction:column; gap:12px;}
+  .ai-result .ar-variation{
+    border:1px solid var(--line); border-radius:var(--radius-md);
+    background:var(--surface-2); padding:14px 16px;
+  }
+  .ai-result .ar-dish{font-size:15.5px; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .ai-result .ar-style-tag{
+    font-size:11px; font-weight:700; color:var(--sage-ink); background:var(--sage-soft);
+    padding:2px 9px; border-radius:999px; letter-spacing:.01em;
+  }
+  .ai-result .ar-meta{font-size:12px; color:var(--ink-muted); margin-bottom:8px;}
+  .ai-result .ar-group{margin-top:10px;}
+  .ai-result .ar-group-label{font-size:12px; font-weight:700; color:var(--ink-muted); margin-bottom:4px;}
+  .ai-result .ar-chip-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .ai-result .ar-chip{
+    font-size:12.5px; padding:4px 10px; border-radius:999px; background:var(--surface);
+    border:1px solid var(--line); color:var(--ink);
+  }
+  .ai-result .ar-chip .ar-chip-tag{color:var(--ink-muted); margin-left:4px;}
+  .ai-result .ar-chip .ar-chip-price{color:var(--rust); font-weight:700; margin-left:4px;}
+  .ai-result .ar-chip-pick{appearance:none; font-family:inherit; cursor:pointer; transition:border-color .15s ease, background .15s ease, color .15s ease;}
+  .ai-result .ar-chip-pick:hover{border-color:var(--sage);}
+  .ai-result .ar-chip-pick.is-selected{border-color:var(--sage); background:var(--sage-soft); color:var(--sage-ink); font-weight:700;}
+  .ai-result .ar-chip-pick.is-selected .ar-chip-tag{color:var(--sage-ink); opacity:.8;}
+  .ai-result .ar-chip-pick:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .ai-result .ar-chip-hint{font-size:11px; color:var(--ink-muted); margin-top:5px;}
+  .ai-result .ar-method{margin-top:12px; font-size:13px; line-height:1.65; color:var(--ink); white-space:pre-wrap;}
+  .ai-result .ar-note{margin-top:10px; font-size:11.5px; color:var(--ink-muted); line-height:1.6;}
+  .ai-btn-loading{opacity:.6; cursor:wait;}
+  .ar-apply-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line);}
+  .ar-apply-msg{font-size:12px; color:var(--sage-ink);}
+  .ar-apply-msg.is-error{color:var(--rust);}
+
+  /* interactive calculator */
+  .calc-shell{display:grid; grid-template-columns:1.3fr 1fr; gap:16px; align-items:start;}
+  @media (max-width:720px){ .calc-shell{grid-template-columns:1fr;} }
+  .preset-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .preset-btn{
+    appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+    font-family:inherit; font-size:13.5px; font-weight:700; letter-spacing:.01em; padding:9px 16px; border-radius:999px;
+    cursor:pointer; box-shadow:var(--shadow-sm); transition:border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .preset-btn:hover{border-color:var(--sage); background:var(--sage-soft); color:var(--sage-ink); transform:translateY(-1px);}
+  .preset-btn:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .preset-btn.reset{color:var(--ink-muted);}
+  .days-row{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px;}
+  .days-row-label{font-size:13px; font-weight:700; color:var(--ink-muted);}
+  .days-row-opts{display:flex; flex-wrap:wrap; gap:8px;}
+  .days-btn{
+    appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+    font-family:inherit; font-size:13px; font-weight:700; padding:7px 14px; border-radius:999px;
+    cursor:pointer; box-shadow:var(--shadow-sm); transition:border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .days-btn:hover{border-color:var(--sage); background:var(--sage-soft); color:var(--sage-ink); transform:translateY(-1px);}
+  .days-btn:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .days-btn.is-active{border-color:var(--ink); background:var(--surface-2); color:var(--ink); box-shadow:var(--shadow-md);}
+  .days-custom-input{
+    width:96px; padding:7px 10px; border:1px solid var(--line); border-radius:10px;
+    background:var(--surface-2); color:var(--ink); font-family:inherit; font-size:13px;
+  }
+  .days-custom-input:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .stepper-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; align-items:stretch;}
+  .remaining-banner{
+    display:flex; justify-content:flex-start; align-items:center; gap:8px; padding:10px 14px;
+    border-radius:10px; background:var(--surface-2); color:var(--ink); border:1px solid var(--line);
+    font-size:13px; font-weight:700;
+  }
+  .remaining-banner .rb-icon{font-size:14px; line-height:1;}
+  .remaining-banner.is-warn{background:var(--warn-bg); color:var(--warn-ink); border-color:var(--warn-border);}
+  .remaining-banner.is-zero{background:var(--ok-bg); color:var(--ok-ink); border-color:var(--ok-border);}
+  .stepper-row{
+    display:flex; flex-direction:column; align-items:stretch; gap:12px;
+    padding:16px 18px; border-radius:var(--radius-md); background:var(--surface); border:1px solid var(--line);
+    box-shadow:var(--shadow-sm); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .stepper-row:hover{box-shadow:var(--shadow-md); border-color:var(--sage); transform:translateY(-1px);}
+  .srow-label{display:flex; align-items:flex-start; gap:11px; min-width:0;}
+  .srow-swatch{width:16px; height:16px; border-radius:5px; flex:none; margin-top:3px;}
+  .srow-text{display:flex; flex-direction:column; gap:3px; line-height:1.45;}
+  .srow-text .st-name{font-size:14.5px; font-weight:700;}
+  .srow-text .st-price{font-size:12.5px; color:var(--ink-muted);}
+  .srow-text .st-example{font-size:11.5px; color:var(--ink-muted); opacity:.85;}
+  .stepper-controls{
+    display:flex; align-items:center; justify-content:flex-end; gap:11px;
+    padding-top:10px; border-top:1px dashed var(--line);
+  }
+  .bento-controls{justify-content:space-between; flex-wrap:wrap; row-gap:10px;}
+  .bento-toggle-group{display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1 1 auto; min-width:0;}
+  .bento-count-group{display:flex; align-items:center; gap:11px; flex:none;}
+  .toggle-row{gap:12px;}
+  .toggle-controls{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    padding-top:10px; border-top:1px dashed var(--line);
+  }
+  .mode-switch{
+    appearance:none; border:none; background:none; padding:0; margin:0; cursor:pointer; flex:none;
+    display:inline-flex; align-items:center; line-height:0;
+  }
+  .switch-track{
+    display:block; width:40px; height:23px; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--line); position:relative;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .switch-thumb{
+    position:absolute; top:2px; left:2px; width:17px; height:17px; border-radius:50%;
+    background:#FFFFFF; box-shadow:var(--shadow-sm); transition:transform .2s ease;
+  }
+  .mode-switch[aria-checked="true"] .switch-track{background:var(--sage); border-color:var(--sage);}
+  .mode-switch[aria-checked="true"] .switch-thumb{transform:translateX(17px);}
+  .mode-switch:focus-visible .switch-track{outline:2px solid var(--sage); outline-offset:2px;}
+  .switch-caption{font-size:12.5px; font-weight:700; color:var(--ink); cursor:default; user-select:none;}
+  .switch-caption .sc-custom{display:none;}
+  .mode-switch[aria-checked="true"] + .switch-caption .sc-avg{display:none;}
+  .mode-switch[aria-checked="true"] + .switch-caption .sc-custom{display:inline;}
+  .custom-input{
+    width:88px; padding:7px 9px; border:1px solid var(--line); border-radius:10px;
+    background:var(--surface); color:var(--ink); font-family:"IBM Plex Mono",monospace; font-size:13px;
+  }
+  .custom-input[hidden]{display:none;}
+  .stepper-btn{
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--line); background:var(--surface-2);
+    color:var(--ink); font-size:17px; font-weight:700; line-height:1; display:flex; align-items:center;
+    justify-content:center; cursor:pointer; font-family:inherit; transition:background .15s ease, transform .15s ease;
+  }
+  .stepper-btn:disabled{opacity:.32; cursor:not-allowed;}
+  .stepper-btn:not(:disabled):hover{background:var(--sage); border-color:var(--sage); color:#FFF; transform:scale(1.06);}
+  .stepper-btn:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .stepper-count{min-width:22px; text-align:center; font-weight:700; font-size:15px;}
+
+  .result-panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:20px 22px;
+    box-shadow:var(--shadow-md); display:flex; flex-direction:column; gap:16px; position:sticky; top:78px;
+  }
+  .result-top{display:flex; justify-content:space-between; align-items:flex-end; gap:10px;}
+  .result-total{font-size:30px; font-weight:700; color:var(--rust); line-height:1;}
+  .result-total-label{font-size:12px; color:var(--ink-muted); font-weight:600;}
+  .result-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px 8px; font-size:11.8px; color:var(--ink-muted); padding-top:12px; border-top:1px solid var(--line);}
+  .result-grid b{display:block; color:var(--ink); font-size:14px; font-weight:700; margin-top:2px;}
+
+  /* per-portion tiles */
+  .portion-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px;}
+  .portion-tile{border-radius:var(--radius-md); padding:16px 18px; display:flex; flex-direction:column; gap:6px; box-shadow:var(--shadow-sm); transition:transform .2s ease;}
+  .portion-tile:hover{transform:translateY(-2px);}
+  .portion-tile .ptier{font-size:12px; font-weight:700; letter-spacing:.04em; opacity:.8;}
+  .portion-tile .pportion{font-size:28px; font-weight:700; line-height:1.1;}
+  .portion-tile .pfour{font-size:12px; opacity:.75;}
+  .portion-tile .pnote{font-size:11px; opacity:.7;}
+
+  /* chart */
+  .chart-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 20px 14px; box-shadow:var(--shadow-sm);}
+  .chart-head{margin-bottom:2px;}
+  .chart-head h3{font-size:14px; font-weight:700; color:var(--ink); margin:0 0 3px; letter-spacing:.01em;}
+  .chart-sub{font-size:12px; color:var(--ink-muted); margin:0 0 12px; line-height:1.5;}
+  .chart-highlight{
+    display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px;
+    background:var(--sage-soft); color:var(--sage-ink);
+    padding:9px 13px; border-radius:var(--radius-sm);
+    font-size:12.5px; font-weight:600; line-height:1.5;
+    margin:0 0 14px;
+  }
+  .chart-highlight b{color:inherit; font-size:14px;}
+  .bar-row{display:flex; align-items:center; gap:12px; padding-block:6px;}
+  .bar-label{width:100px; flex:none; font-size:12.5px; font-weight:600; text-align:right;}
+  .bar-track{flex:1; background:var(--surface-2); border-radius:999px; height:21px; position:relative; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:999px; display:flex; align-items:center; transition:filter .15s ease;}
+  .bar-fill:hover{filter:brightness(1.08);}
+  .bar-fill .bar-val{padding-left:10px; font-size:11.5px; font-weight:700; color:inherit; white-space:nowrap;}
+  .bar-fill.live{background:linear-gradient(90deg, var(--sage), #2DD4BF); color:#FFFFFF; transition:width .3s ease;}
+  .bar-row.live-row .bar-label{color:var(--sage); font-weight:700;}
+  .axis-note{display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-muted); padding-left:112px; margin-top:1px;}
+  .bar-compose{font-size:10.5px; color:var(--ink-muted); padding-left:112px; margin-top:-3px; padding-bottom:0;}
+
+  /* menu planner (second layer: assign actual dishes per cook day — protein + veg + staple together) */
+  .menu-total-bar{
+    display:flex; flex-direction:column; gap:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:14px 18px; box-shadow:var(--shadow-sm); margin-bottom:18px;
+  }
+  .menu-total-bar[hidden]{display:none;}
+  .mtb-main{display:flex; flex-wrap:wrap; gap:10px 26px; align-items:center;}
+  .mtb-stat{display:flex; flex-direction:column; gap:2px;}
+  .mtb-label{font-size:11.5px; color:var(--ink-muted); font-weight:600;}
+  .mtb-value{font-size:16px; font-weight:700; color:var(--ink);}
+  .mtb-total .mtb-value{color:var(--rust); font-size:19px;}
+  .mtb-breakdown{display:flex; flex-wrap:wrap; gap:8px 22px; padding-top:10px; border-top:1px dashed var(--line);}
+  .mtb-bd-item{display:flex; align-items:baseline; gap:6px;}
+  .mtb-bd-label{font-size:12px; color:var(--ink-muted);}
+  .mtb-bd-value{font-size:13.5px; font-weight:700; color:var(--ink);}
+  .menu-bento-note{font-size:12.5px; color:var(--ink-muted); padding:10px 14px; background:var(--surface-2); border-radius:var(--radius-sm); margin-bottom:18px;}
+  .menu-empty{font-size:13px; color:var(--ink-muted); padding:22px; text-align:center; border:1px dashed var(--line); border-radius:var(--radius-md);}
+  .menu-tier-group{margin-bottom:24px;}
+  .menu-tier-group:last-child{margin-bottom:0;}
+  .menu-tier-head{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+  .menu-tier-head .srow-swatch{width:14px; height:14px; border-radius:5px; flex:none;}
+  .menu-tier-head .mt-name{font-weight:700; font-size:14.5px;}
+  .menu-tier-head .mt-count{font-size:12px; color:var(--ink-muted); font-weight:600;}
+  .menu-day-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px;}
+  .menu-day-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:14px 16px;
+    display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadow-sm);
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .menu-day-card:hover{box-shadow:var(--shadow-md);}
+  .mday-head{display:flex; align-items:baseline; gap:8px; padding-bottom:9px; border-bottom:1px dashed var(--line);}
+  .mday-head .mday-num{font-weight:700; font-size:14px; flex:none;}
+  .mday-head .mday-total{font-size:11px; color:var(--ink-muted); font-weight:500; margin-left:auto; text-align:right; white-space:nowrap;}
+  .mday-row{display:flex; flex-direction:column; gap:4px;}
+  .mday-row.is-filled .mrow-label{color:var(--sage-ink);}
+  .mrow-label{font-size:11px; font-weight:700; color:var(--ink-muted); letter-spacing:.03em;}
+  .mrow-empty{font-size:12px; color:var(--ink-muted); font-style:italic;}
+  .mrow-goto{
+    align-self:flex-start; appearance:none; border:none; background:none; color:var(--sage);
+    font-family:inherit; font-size:11.5px; font-weight:700; padding:0; margin-top:2px; cursor:pointer; text-decoration:underline;
+  }
+  .ms-select{
+    appearance:none; border:1px solid var(--line); border-radius:8px; background:var(--surface);
+    color:var(--ink); font-family:inherit; font-size:13px; padding:7px 9px; cursor:pointer; width:100%;
+  }
+  .ms-select:focus-visible{outline:2px solid var(--sage); outline-offset:1px;}
+  .ms-info{font-size:11.5px; color:var(--ink-muted); line-height:1.5; min-height:1.4em;}
+  .ms-info b{color:var(--rust); font-weight:700;}
+  .menu-summary{margin-top:26px; padding-top:18px; border-top:1px solid var(--line);}
+  .menu-summary[hidden]{display:none;}
+  .menu-summary h3{font-size:14px; font-weight:700; margin:0 0 12px;}
+  .menu-summary-group{margin-bottom:12px;}
+  .menu-summary-group:last-child{margin-bottom:0;}
+  .msg-title{font-size:11.5px; font-weight:700; color:var(--ink-muted); margin-bottom:6px;}
+  .menu-summary-list{display:flex; flex-wrap:wrap; gap:8px;}
+  .menu-summary-chip{
+    display:inline-flex; align-items:baseline; gap:5px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:999px; padding:6px 12px; font-size:12.5px;
+  }
+  .menu-summary-chip b{font-weight:700;}
+  .menu-summary-chip .ms-x{color:var(--ink-muted); font-size:11px;}
+
+  footer{border-top:1px solid var(--line); padding-top:16px; display:flex; flex-direction:column; gap:8px;}
+  footer ul{margin:8px 0 0; padding-left:18px; color:var(--ink-muted); font-size:12.5px; line-height:1.7;}
+  footer p{margin:0; color:var(--ink-muted); font-size:12px;}
+
+  @media (max-width:480px){
+    .result-grid{grid-template-columns:1fr 1fr;}
+    .bar-label{width:78px; font-size:11.5px;}
+    .axis-note{padding-left:90px;}
+    .bar-compose{padding-left:90px;}
+  }
+
+  /* responsive tables: card layout below 640px, driven by data-label attrs the script fills in */
+  @media (max-width:640px){
+    .table-scroll table, .veg-builder table{min-width:0;}
+    .table-scroll thead{display:none;}
+    .table-scroll tbody tr{display:block; padding:10px 14px; border-bottom:1px solid var(--line);}
+    .table-scroll tbody tr:last-child{border-bottom:none;}
+    .table-scroll tbody td{display:block; border-bottom:none; padding:3px 0; white-space:normal;}
+    .table-scroll tbody td.name{font-size:14.5px; white-space:normal;}
+    .table-scroll tbody td[data-label]:not(.name)::before{
+      content: attr(data-label) "："; color:var(--ink-muted); font-size:11px; font-weight:600;
+    }
+
+    .veg-builder table{display:block;}
+    .veg-builder thead{display:block;}
+    .veg-builder tbody{display:block;}
+    .veg-builder thead tr{display:flex; flex-wrap:wrap; gap:4px; position:static;}
+    .veg-builder thead th{position:static; flex:none; padding:0; background:none; border-bottom:none;}
+    .veg-builder thead th:empty{display:none;}
+    .veg-builder .sort-th{padding:7px 10px; font-size:11px; border-radius:999px; background:var(--surface-2); width:auto;}
+    .veg-builder tbody tr{display:block; padding:10px 14px; border-bottom:1px solid var(--line);}
+    .veg-builder tbody tr:last-child{border-bottom:none;}
+    .veg-builder tbody td{display:block; border-bottom:none; padding:2px 0; white-space:normal;}
+    .veg-builder tbody td:first-child{display:inline-block; margin-right:8px; vertical-align:middle;}
+    .veg-builder tbody td.name{display:inline-block; font-size:14.5px; vertical-align:middle;}
+    .veg-builder tbody td[data-label]:not(.name)::before{
+      content: attr(data-label) "："; color:var(--ink-muted); font-size:11px; font-weight:600;
+    }
+  }
+
+  /* app-shell top nav */
+  html{scroll-behavior:smooth;}
+  section{scroll-margin-top:66px;}
+  .topnav{
+    position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line);
+    background:rgba(248,250,252,.8); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .topnav{background:rgba(11,15,23,.8);}
+  }
+  :root[data-theme="dark"] .topnav{background:rgba(11,15,23,.8);}
+  .topnav-inner{
+    padding:10px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .topnav-title{
+    font-family:"Noto Sans TC",sans-serif; font-weight:800; font-size:14px; letter-spacing:.02em; white-space:nowrap;
+    background:linear-gradient(135deg, var(--sage), var(--rust)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .topnav-links{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none;}
+  .topnav-links::-webkit-scrollbar{display:none;}
+  .topnav-links a{
+    text-decoration:none; white-space:nowrap; font-size:12px; font-weight:600; letter-spacing:.03em;
+    color:var(--ink-muted); padding:6px 12px; border:1px solid transparent; border-radius:999px; transition:border-color .15s ease, color .15s ease;
+  }
+  .topnav-links a:hover{color:var(--ink);}
+  .topnav-links a.is-active{border-color:var(--ink); color:var(--ink);}
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <span class="topnav-title">備餐分級手冊</span>
+    <div class="topnav-links">
+      <a href="#compare" data-nav="compare">試算</a>
+      <a href="#menu" data-nav="menu">排菜</a>
+      <a href="#protein" data-nav="protein">蛋白質</a>
+      <a href="#veg" data-nav="veg">蔬菜</a>
+      <a href="#staple" data-nav="staple">主食</a>
+      <a href="#perportion" data-nav="perportion">每份參考</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- SECTION D: 排法比較 -->
+  <section id="compare" hidden>
+    <div class="section-head">
+      <span class="section-tag" id="compareSectionTag">14 天試算</span>
+      <h2>自己排 <span id="planDaysLabel1">14</span> 天，即時看總價</h2>
+      <p class="sub">自己選便當天數，剩下天數分配五種分級，滿 <span id="planDaysLabel2">14</span> 天會自動鎖住。</p>
+      <details class="more"><summary>蔬菜／主食怎麼算</summary><p class="more-body">蔬菜、主食預設用平均值，也可以切換「自訂」自己輸入每天價格（例如每天都吃玉米當主食）。</p></details>
+    </div>
+
+    <div class="days-row">
+      <span class="days-row-label">規劃天數</span>
+      <div class="days-row-opts" id="daysRowOpts" role="group" aria-label="選擇規劃天數">
+        <button class="days-btn" type="button" data-days="1">1 天</button>
+        <button class="days-btn" type="button" data-days="3">3 天</button>
+        <button class="days-btn" type="button" data-days="5">5 天</button>
+        <button class="days-btn" type="button" data-days="7">7 天</button>
+        <button class="days-btn is-active" type="button" data-days="14">14 天</button>
+        <button class="days-btn" type="button" data-days="30">1 個月（30 天）</button>
+        <button class="days-btn" type="button" data-days="custom" id="daysCustomBtn">自訂天數</button>
+      </div>
+      <input type="number" class="days-custom-input num" id="daysCustomInput" min="1" max="120" step="1" value="14" hidden aria-label="自訂規劃天數" placeholder="輸入天數">
+    </div>
+    <p class="sub" style="margin-top:-6px;">切換天數會依目前的分配比例，自動幫你重新分配到新的天數，之後還是可以用下面的 −／+ 微調。</p>
+
+    <div class="preset-row">
+      <button class="preset-btn" type="button" data-preset="one">套用排法一・省錢優先</button>
+      <button class="preset-btn" type="button" data-preset="two">套用排法二・奢華享受一次</button>
+      <button class="preset-btn" type="button" data-preset="three">套用排法三・兩頭平均</button>
+      <button class="preset-btn reset" type="button" data-preset="clear">清空重排</button>
+    </div>
+
+    <div class="calc-shell">
+      <div class="stepper-list">
+        <div class="stepper-row" data-key="bento">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--sage);"></span>
+            <div class="srow-text"><span class="st-name">便當日</span><span class="st-price num">4 個 × 200 元／天</span><span class="st-example">不用煮，晚餐＋隔天午餐都吃便當</span></div>
+          </div>
+          <div class="stepper-controls bento-controls">
+            <div class="bento-toggle-group">
+              <button type="button" class="mode-switch" role="switch" aria-checked="false" data-key="bento" aria-label="切換便當價格模式：平均或自訂">
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+              </button>
+              <span class="switch-caption" data-key="bento"><span class="sc-avg">平均 800 元／天</span><span class="sc-custom">自訂</span></span>
+              <input type="number" class="custom-input num" id="custom-bento" min="0" step="10" value="800" hidden aria-label="自訂每日便當價格" placeholder="輸入每日便當預算（元）">
+            </div>
+            <div class="bento-count-group">
+              <button class="stepper-btn" type="button" data-action="dec" data-key="bento" aria-label="減少便當日">−</button>
+              <span class="stepper-count num" id="count-bento">4</span>
+              <button class="stepper-btn" type="button" data-action="inc" data-key="bento" aria-label="增加便當日">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stepper-row" data-key="XS">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--tier-xs);"></span>
+            <div class="srow-text"><span class="st-name">平價省錢</span><span class="st-price num">$100／四人份（平均每人每餐 $25）</span><span class="st-example">例：蛋、蛤蜊</span></div>
+          </div>
+          <div class="stepper-controls">
+            <button class="stepper-btn" type="button" data-action="dec" data-key="XS" aria-label="減少 平價省錢">−</button>
+            <span class="stepper-count num" id="count-XS">3</span>
+            <button class="stepper-btn" type="button" data-action="inc" data-key="XS" aria-label="增加 平價省錢">+</button>
+          </div>
+        </div>
+
+        <div class="stepper-row" data-key="S">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--tier-s);"></span>
+            <div class="srow-text"><span class="st-name">日常超值</span><span class="st-price num">$180／四人份（平均每人每餐 $45）</span><span class="st-example">例：醃雞丁、醃豬肉絲</span></div>
+          </div>
+          <div class="stepper-controls">
+            <button class="stepper-btn" type="button" data-action="dec" data-key="S" aria-label="減少 日常超值">−</button>
+            <span class="stepper-count num" id="count-S">3</span>
+            <button class="stepper-btn" type="button" data-action="inc" data-key="S" aria-label="增加 日常超值">+</button>
+          </div>
+        </div>
+
+        <div class="stepper-row" data-key="M">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--tier-m);"></span>
+            <div class="srow-text"><span class="st-name">標準均衡</span><span class="st-price num">$260／四人份（平均每人每餐 $65）</span><span class="st-example">例：雞胸、雞里肌、黃金土雞切塊、雞翅</span></div>
+          </div>
+          <div class="stepper-controls">
+            <button class="stepper-btn" type="button" data-action="dec" data-key="M" aria-label="減少 標準均衡">−</button>
+            <span class="stepper-count num" id="count-M">3</span>
+            <button class="stepper-btn" type="button" data-action="inc" data-key="M" aria-label="增加 標準均衡">+</button>
+          </div>
+        </div>
+
+        <div class="stepper-row" data-key="L">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--tier-l);"></span>
+            <div class="srow-text"><span class="st-name">豐盛美味</span><span class="st-price num">$395／四人份（平均每人每餐 $99）</span><span class="st-example">例：豬梅花、白蝦</span></div>
+          </div>
+          <div class="stepper-controls">
+            <button class="stepper-btn" type="button" data-action="dec" data-key="L" aria-label="減少 豐盛美味">−</button>
+            <span class="stepper-count num" id="count-L">1</span>
+            <button class="stepper-btn" type="button" data-action="inc" data-key="L" aria-label="增加 豐盛美味">+</button>
+          </div>
+        </div>
+
+        <div class="stepper-row" data-key="XL">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--tier-xl);"></span>
+            <div class="srow-text"><span class="st-name">奢華享受</span><span class="st-price num">約 $720／四人份（平均每人每餐 約 $180）</span><span class="st-example">例：雞腿肉、蝦仁（牛肋眼單份 1300 元偏高，不計入平均）</span></div>
+          </div>
+          <div class="stepper-controls">
+            <button class="stepper-btn" type="button" data-action="dec" data-key="XL" aria-label="減少 奢華享受">−</button>
+            <span class="stepper-count num" id="count-XL">0</span>
+            <button class="stepper-btn" type="button" data-action="inc" data-key="XL" aria-label="增加 奢華享受">+</button>
+          </div>
+        </div>
+
+        <div class="stepper-row toggle-row" data-key="veg">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--sage);"></span>
+            <div class="srow-text"><span class="st-name">蔬菜（每個煮飯天）</span><span class="st-example">平均＝湯底＋快炒或烤蔬菜；自訂可輸入你自己的每日蔬菜預算</span></div>
+          </div>
+          <div class="toggle-controls">
+            <button type="button" class="mode-switch" role="switch" aria-checked="false" data-key="veg" aria-label="切換蔬菜價格模式：平均或自訂">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </button>
+            <span class="switch-caption" data-key="veg"><span class="sc-avg">平均 140 元</span><span class="sc-custom">自訂</span></span>
+            <input type="number" class="custom-input num" id="custom-veg" min="0" step="5" value="140" hidden aria-label="自訂每日蔬菜價格" placeholder="輸入每日蔬菜預算（元）">
+          </div>
+        </div>
+
+        <div class="stepper-row toggle-row" data-key="staple">
+          <div class="srow-label">
+            <span class="srow-swatch" style="background:var(--sage);"></span>
+            <div class="srow-text"><span class="st-name">主食（每個煮飯天）</span><span class="st-example">例如每天都想吃玉米，選自訂改成約 20 元／天更便宜</span></div>
+          </div>
+          <div class="toggle-controls">
+            <button type="button" class="mode-switch" role="switch" aria-checked="false" data-key="staple" aria-label="切換主食價格模式：平均或自訂">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </button>
+            <span class="switch-caption" data-key="staple"><span class="sc-avg">平均 90 元</span><span class="sc-custom">自訂</span></span>
+            <input type="number" class="custom-input num" id="custom-staple" min="0" step="5" value="90" hidden aria-label="自訂每日主食價格" placeholder="輸入每日主食預算（元）">
+          </div>
+        </div>
+      </div>
+
+      <div class="result-panel">
+        <div class="result-top">
+          <div><div class="result-total-label" id="resultTotalLabel">總花費</div><div class="result-total num" id="resultTotal">$7,515</div></div>
+          <div style="text-align:right;"><div class="result-total-label" title="總花費 ÷ 應排份數（規劃天數 × 4 份／天），是你目前混搭的分級＋便當算出來的實際均價" id="resultPortionLabelWrap">每份平均 <span aria-hidden="true" style="opacity:.6;">ⓘ</span></div><div class="num" style="font-size:18px;font-weight:700;" id="resultPortion">$134</div></div>
+        </div>
+        <div class="result-grid">
+          <div>日均<b class="num" id="resultWeek">3,758 元</b></div>
+          <div>蛋白質<b class="num" id="resultProtein">2,015 元</b></div>
+          <div>便當錢<b class="num" id="resultBento">3,200 元</b></div>
+          <div>蔬菜<b class="num" id="resultVeg">1,400 元</b></div>
+          <div>主食<b class="num" id="resultStaple">900 元</b></div>
+          <div>煮飯天數<b class="num" id="resultCookDays">10 天</b></div>
+        </div>
+        <div class="remaining-banner" id="remainingBanner"><span class="rb-icon" id="remainingIcon" aria-hidden="true"></span><span>剩餘可分配天數：<span id="remainingCount" class="num">0</span> / <span id="remainingTotal" class="num">14</span></span></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>跟三個參考排法比一比</h3>
+        <p class="chart-sub">同樣 <span id="chartDaysLabel">14</span> 天、<span id="chartPortionsLabel">56</span> 份，比較「目前自訂」跟三種預設天數分配法的總花費</p>
+      </div>
+      <p class="chart-highlight" id="deltaNote">目前選擇比排法一打平，比排法三少 <b class="num">1,295 元</b>。</p>
+      <div class="bar-row">
+        <div class="bar-label">排法一</div>
+        <div class="bar-track"><div class="bar-fill" id="refbar-one" style="background:var(--tier-m); color:var(--tier-m-ink);" title="排法一：7,515 元"><span class="bar-val num" id="refbar-one-val">$7,515</span></div></div>
+      </div>
+      <div class="bar-compose" id="refbar-one-compose"></div>
+      <div class="bar-row">
+        <div class="bar-label">排法二</div>
+        <div class="bar-track"><div class="bar-fill" id="refbar-two" style="background:var(--tier-l); color:var(--tier-l-ink);" title="排法二：8,270 元"><span class="bar-val num" id="refbar-two-val">$8,270</span></div></div>
+      </div>
+      <div class="bar-compose" id="refbar-two-compose"></div>
+      <div class="bar-row">
+        <div class="bar-label">排法三</div>
+        <div class="bar-track"><div class="bar-fill" id="refbar-three" style="background:var(--tier-xl); color:var(--tier-xl-ink);" title="排法三：8,810 元"><span class="bar-val num" id="refbar-three-val">$8,810</span></div></div>
+      </div>
+      <div class="bar-compose" id="refbar-three-compose"></div>
+      <div class="bar-row live-row">
+        <div class="bar-label">目前自訂</div>
+        <div class="bar-track"><div class="bar-fill live" id="refbar-live" title="目前選擇"><span class="bar-val num" id="refbar-live-val">$7,318</span></div></div>
+      </div>
+      <div class="axis-note"><span>$0</span><span id="axisMax" class="num">最高 $8,810</span></div>
+    </div>
+  </section>
+
+  <!-- SECTION M: 兩週排菜 -->
+  <section id="menu" hidden>
+    <div class="section-head">
+      <span class="section-tag" id="menuSectionTag">兩週排菜</span>
+      <h2>把分級換成實際菜色</h2>
+      <p class="sub">先在「試算」排好 <span id="menuDaysLabel">14</span> 天的分級天數，這裡每個煮飯天會排成一張卡，蛋白質、蔬菜、主食一次選齊。蔬菜選項來自你在「蔬菜」頁建立的搭配組合，同一天／同一分級可以重複選同一道菜，便當日不用選、外食或超商便當即可。</p>
+    </div>
+    <div class="ai-settings-panel" id="aiSettingsPanel">
+      <div class="ai-settings-head">
+        <span class="ai-settings-title">AI 設定</span>
+        <span class="ai-settings-status" id="aiSettingsStatus">檢查中…</span>
+      </div>
+      <p class="sub">「AI 食譜靈感」跟「做法提示改用 AI 生成」需要 AI 服務才能用。用有權限的 claude.ai 帳號開啟這個頁面時會自動使用平台內建的 AI，不用設定。如果不是（例如這個頁面被分享到別的網址開啟），可以在下面貼上你自己的 OpenAI API 金鑰——只會存在這台裝置、這個瀏覽器裡，不會傳給任何人，只會在你按下 AI 功能時直接送去 OpenAI。</p>
+      <div class="ai-settings-bar">
+        <input type="password" id="openAiKeyInput" placeholder="貼上你的 OpenAI API 金鑰（sk-...）" autocomplete="off">
+        <button type="button" class="builder-btn" id="openAiKeySaveBtn">儲存</button>
+        <button type="button" class="builder-btn ghost" id="openAiKeyClearBtn">清除</button>
+      </div>
+      <div class="ai-settings-msg" id="aiSettingsMsg" hidden></div>
+    </div>
+    <div class="ai-panel" id="aiRecipePanel">
+      <h3>AI 食譜靈感</h3>
+      <p class="sub">輸入想吃的菜名或主題（例如「壽喜燒火鍋」），AI 會用你現有的食材清單，一次給 2～3 個做法版本讓你挑。覺得不錯就按「加入排菜」，自動排進下一個空的煮飯天；蔬菜的部分會另外存成新的搭配卡片。</p>
+      <div class="ai-bar">
+        <input type="text" id="aiRecipeInput" placeholder="想吃什麼？例如：壽喜燒火鍋">
+        <button type="button" class="builder-btn" id="aiRecipeBtn">生成建議</button>
+      </div>
+      <div class="ai-msg" id="aiRecipeMsg" hidden></div>
+      <div class="ai-result" id="aiRecipeResult" hidden></div>
+    </div>
+    <div class="preset-row" id="menuActionsRow" hidden>
+      <button class="preset-btn" type="button" id="menuRandomBtn" title="每一份的蛋白質、蔬菜、主食都會重新隨機挑選，會覆蓋目前已選的品項">隨機排菜</button>
+      <button class="preset-btn reset" type="button" id="menuClearBtn" title="把下面每一份已選的蛋白質、蔬菜、主食都清成「— 選擇 —」，不會影響「試算」的天數分配">清空排菜</button>
+    </div>
+    <div class="menu-total-bar" id="menuTotalBar" hidden>
+      <div class="mtb-main">
+        <div class="mtb-stat"><span class="mtb-label">已選 / 應排份數</span><span class="mtb-value num" id="mtbFilled">0 / 0</span></div>
+        <div class="mtb-stat mtb-total"><span class="mtb-label" title="依你在下面實際選的蛋白質、蔬菜、主食品項加總，跟上面「試算」頁用固定分級金額算出的規劃總價不同">實際選菜總計 <span aria-hidden="true" style="opacity:.6;">ⓘ</span></span><span class="mtb-value num" id="mtbTotal">約 $0</span></div>
+        <div class="mtb-stat"><span class="mtb-label">平均每份</span><span class="mtb-value num" id="mtbPerPortion">約 $0</span></div>
+      </div>
+      <div class="mtb-breakdown">
+        <div class="mtb-bd-item"><span class="mtb-bd-label">蛋白質合計</span><span class="mtb-bd-value num" id="mtbProtein">約 $0</span></div>
+        <div class="mtb-bd-item"><span class="mtb-bd-label">蔬菜合計</span><span class="mtb-bd-value num" id="mtbVeg">約 $0</span></div>
+        <div class="mtb-bd-item"><span class="mtb-bd-label">主食合計</span><span class="mtb-bd-value num" id="mtbStaple">約 $0</span></div>
+      </div>
+    </div>
+    <div id="menuBody"></div>
+    <div id="menuSummary" class="menu-summary" hidden></div>
+    <div class="plan-panel">
+      <h3>我的計畫</h3>
+      <p class="sub">目前排的會自動記住這台裝置、這個瀏覽器的狀態，刷新、關掉分頁都還在；想留存好幾份（例如「這週」「下週」）可以取名字另存，或匯出成檔案備份／傳給別人。也可以直接輸出一張排好的菜單圖片，方便分享或印出來貼——圖片會列出每一份蔬菜組合實際包含的菜色，方便直接照著採買，並附上簡易做法提示。</p>
+      <div class="plan-bar">
+        <input type="text" id="planNameInput" placeholder="幫這份計畫取個名字，例如：9月第3週">
+        <button type="button" class="builder-btn" id="planSaveBtn">另存新計畫</button>
+        <button type="button" class="builder-btn ghost" id="planExportBtn">匯出.json</button>
+        <button type="button" class="builder-btn ghost" id="planImportBtn">匯入.json</button>
+        <button type="button" class="builder-btn ghost" id="menuExportImgBtn">輸出菜單圖片</button>
+        <input type="file" id="planImportInput" accept="application/json,.json" hidden>
+      </div>
+      <div class="poster-opt-row" id="posterAiTipRow">
+        <label class="poster-ai-toggle"><input type="checkbox" id="posterAiTipToggle"> 做法提示改用 AI 生成（更貼近實際菜色，但要多等 10–30 秒）</label>
+      </div>
+      <div class="plan-msg" id="planMsg" hidden></div>
+      <div class="plan-list" id="planList"></div>
+    </div>
+  </section>
+
+  <!-- SECTION A: 蛋白質分級 -->
+  <section id="protein" hidden>
+    <div class="section-head">
+      <span class="section-tag">蛋白質分級</span>
+      <h2>蛋白質五階分級表</h2>
+      <p class="sub">價格已換算成「四人份」成本，不是單包價。</p>
+      <details class="more"><summary>換算方式與缺貨品項</summary><p class="more-body">四人份約 500g 生重，但多數品項是以 200g／250g／300g 等固定規格整包販售，所以價格是「買到接近 500g 所需的整包數量」的實際總價，不是硬湊出 500g 的比例換算，湊出來可能略多或略少於 500g。有心目前查不到的品項會標「有心無貨」，建議改到傳統市場或其他管道找。</p></details>
+    </div>
+    <div class="tab-row" role="tablist" aria-label="蛋白質分級">
+      <button class="tab-btn is-active" type="button" data-tab="XS" role="tab" aria-selected="true"><span class="tab-dot" style="background:var(--tier-xs);"></span>平價省錢 <span class="tab-amt num">100 元</span></button>
+      <button class="tab-btn" type="button" data-tab="S" role="tab" aria-selected="false"><span class="tab-dot" style="background:var(--tier-s);"></span>日常超值 <span class="tab-amt num">180 元</span></button>
+      <button class="tab-btn" type="button" data-tab="M" role="tab" aria-selected="false"><span class="tab-dot" style="background:var(--tier-m);"></span>標準均衡 <span class="tab-amt num">260 元</span></button>
+      <button class="tab-btn" type="button" data-tab="L" role="tab" aria-selected="false"><span class="tab-dot" style="background:var(--tier-l);"></span>豐盛美味 <span class="tab-amt num">395 元</span></button>
+      <button class="tab-btn" type="button" data-tab="XL" role="tab" aria-selected="false"><span class="tab-dot" style="background:var(--tier-xl);"></span>奢華享受 <span class="tab-amt num">約 720 元</span></button>
+    </div>
+
+    <div class="tab-panel" data-panel="XS">
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="iname">蛋</div>
+          <div class="isource">傳統市場／超市，非有心商品</div>
+          <div class="ispec num">約 8 顆蛋</div>
+          <div class="ifoot"><span class="iprice num">約 60 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">蛤蜊</div>
+          <div class="isource">傳統市場</div>
+          <div class="inote">市場價，通常最便宜的海鮮選項</div>
+          <div class="ifoot"><span class="iprice num">約 100 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">鮪魚罐頭</div>
+          <div class="isource">超市／量販店，已核實</div>
+          <div class="ispec num">2 罐（約 320g）</div>
+          <div class="ifoot"><span class="iprice num">約 100 元</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="S" hidden>
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="iname">醃雞丁</div>
+          <div class="isource">有心「只有－家常醃去皮雞丁」</div>
+          <div class="ispec num">250g／90 元，買 2 包＝500g</div>
+          <div class="inote">已醃製，配蔬菜快炒即可上桌</div>
+          <div class="ifoot"><span class="iprice num">180 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">醃豬肉絲</div>
+          <div class="isource">有心「只有－家常醃豬肉絲」</div>
+          <div class="ispec num">250g／90 元，買 2 包＝500g</div>
+          <div class="inote">已醃製，配蔬菜快炒即可上桌</div>
+          <div class="ifoot"><span class="iprice num">180 元</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="M" hidden>
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="iname">豬絞肉（後腿）</div>
+          <div class="isource">有心放心豬－後腿絞肉</div>
+          <div class="ispec num">200g／125 元，買 2 包＝400g</div>
+          <div class="inote">肥瘦比 8:2，少筋少肉，適合包水餃、蒸肉餅</div>
+          <div class="ifoot"><span class="iprice num">250 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">雞胸</div>
+          <div class="isource">有心黃金土雞去皮胸肉</div>
+          <div class="ispec num">200g／125 元，買 2 包＝400g</div>
+          <div class="ifoot"><span class="iprice num">250 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">雞里肌</div>
+          <div class="isource">有心黃金土雞里肌</div>
+          <div class="ispec num">200g／125 元，買 2 包＝400g</div>
+          <div class="ifoot"><span class="iprice num">250 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">黃金土雞切塊</div>
+          <div class="isource">有心黃金土雞－土雞切塊</div>
+          <div class="ispec num">整包約 600g／330 元（你的購物車確認）</div>
+          <div class="inote">通常適合整包燉湯</div>
+          <div class="ifoot"><span class="iprice num">330 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">雞翅</div>
+          <div class="isource">有心黃金土雞－三節翅（你的購物車確認）</div>
+          <div class="ispec num">300g／125 元，買 2 包＝600g</div>
+          <div class="ifoot"><span class="iprice num">250 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">瘦豬肉絲（後腿）</div>
+          <div class="isource">有心放心豬－後腿肉絲</div>
+          <div class="ispec num">單包 200g／130 元，買 2 包＝400g</div>
+          <div class="inote">豬里肌有心沒有賣，這個是最接近的瘦豬肉選項</div>
+          <div class="ifoot"><span class="iprice num">260 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">雞腿肉（冷氣雞）</div>
+          <div class="isource">有心冷氣雞－去骨雞腿肉</div>
+          <div class="ispec num">220g／130 元，買 2 包＝440g</div>
+          <div class="inote">氣冷降溫減少交叉污染，肉感軟嫩多汁</div>
+          <div class="ifoot"><span class="iprice num">260 元</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="L" hidden>
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="iname">豬梅花</div>
+          <div class="isource">有心放心豬梅花肉片（你已確認）</div>
+          <div class="ispec num">2 包 400g／380 元</div>
+          <div class="ifoot"><span class="iprice num">380 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">豬小排骨</div>
+          <div class="isource">有心放心豬－豬小排骨</div>
+          <div class="ispec num">280g／210 元，買 2 包＝560g（你已確認）</div>
+          <div class="inote">適合燉蘿蔔玉米排骨湯</div>
+          <div class="ifoot"><span class="iprice num">420 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">豬五花</div>
+          <div class="isource">有心放心豬五花肉條</div>
+          <div class="ispec num">300g／230 元，買 2 包＝600g</div>
+          <div class="ifoot"><span class="iprice num">460 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">白蝦／草蝦</div>
+          <div class="isource">有心好水蝦白蝦</div>
+          <div class="ispec num">300g／290 元</div>
+          <div class="ifoot"><span class="iprice num">約 480 元</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="XL" hidden>
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="iname">雞腿肉／雞腿排</div>
+          <div class="isource">有心去骨雞腿肉（黃金土雞）</div>
+          <div class="ispec num">350g／355 元</div>
+          <div class="ifoot"><span class="iprice num">約 505 元</span></div>
+        </div>
+        <div class="item-card">
+          <div class="iname">蝦仁</div>
+          <div class="isource">有心水藻白蝦蝦仁</div>
+          <div class="ispec num">150g／280 元</div>
+          <div class="ifoot"><span class="iprice num">約 935 元</span></div>
+        </div>
+        <div class="item-card is-missing">
+          <div class="iname">豬里肌</div>
+          <div class="ifoot"><span class="missing-badge">有心無此單品，最近的是松阪肉（貴很多）</span></div>
+          <div class="inote">想吃瘦豬肉可改選豐盛美味級的「後腿肉絲」，或跳過</div>
+        </div>
+        <div class="item-card is-missing">
+          <div class="iname">牛小排</div>
+          <div class="ifoot"><span class="missing-badge">有心無此單品</span></div>
+          <div class="inote">建議傳統市場另買</div>
+        </div>
+        <div class="item-card">
+          <div class="iname">牛板腱</div>
+          <div class="isource">有心純血黃牛肋眼牛排（近似）</div>
+          <div class="ispec num">200g／520 元</div>
+          <div class="inote">［近似品項，200g 規格偏小，適合當 1–2 人份，不必硬湊四人份］</div>
+          <div class="ifoot"><span class="iprice num">約 1300 元</span></div>
+        </div>
+        <div class="item-card is-missing">
+          <div class="iname">干貝</div>
+          <div class="ifoot"><span class="missing-badge">有心無此單品，建議其他海鮮管道</span></div>
+          <div class="inote">市價通常較高</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION B: 蔬菜搭配 -->
+  <section id="veg" hidden>
+    <div class="section-head">
+      <span class="section-tag">蔬菜搭配</span>
+      <h2>蔬菜單價表與搭配組合</h2>
+      <p class="sub">勾選食材、命名後按確認，就會加入下方搭配表。</p>
+      <details class="more"><summary>價格與重量怎麼抓的</summary><p class="more-body">傳統市場估值（沒有實際核價，抓批發價的 1.5～2 倍當零售價），單位是「四人份」。重量是大致估算，方便掌握纖維攝取量，不是精秤數字。</p></details>
+    </div>
+
+    <h3 style="font-size:15px; font-weight:700; margin:0;">蔬菜單價表（可勾選）</h3>
+    <div class="edit-banner" id="editBanner" hidden>
+      <span>正在編輯：<b id="editBannerName"></b></span>
+      <button type="button" id="editBannerCancel">取消編輯</button>
+    </div>
+    <div class="veg-builder">
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th></th>
+            <th><button type="button" class="sort-th" data-sort="name">食材<span class="sort-ind"></span></button></th>
+            <th><button type="button" class="sort-th" data-sort="cat">種類<span class="sort-ind"></span></button></th>
+            <th><button type="button" class="sort-th" data-sort="cook">烹調建議<span class="sort-ind"></span></button></th>
+            <th><button type="button" class="sort-th" data-sort="weight">大致重量<span class="sort-ind"></span></button></th>
+            <th><button type="button" class="sort-th" data-sort="price">四人份估價<span class="sort-ind"></span></button></th>
+          </tr></thead>
+          <tbody id="vegItemsBody">
+            <tr data-price="55" data-name="花椰菜（綠／白）" data-cat="花菜類" data-cook="蒸烤炒皆宜" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="花椰菜（綠／白）" data-price="55"></td><td class="name">花椰菜（綠／白）</td><td class="note">花菜類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 400g</td><td class="num price">55 元</td></tr>
+            <tr data-price="50" data-name="高麗菜" data-cat="葉菜類" data-cook="蒸烤炒皆宜" data-weight="600"><td><input type="checkbox" class="veg-check" data-name="高麗菜" data-price="50"></td><td class="name">高麗菜</td><td class="note">葉菜類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 600g</td><td class="num price">50 元</td></tr>
+            <tr data-price="35" data-name="四季豆" data-cat="豆莢類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="四季豆" data-price="35"></td><td class="name">四季豆</td><td class="note">豆莢類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">35 元</td></tr>
+            <tr data-price="40" data-name="杏鮑菇" data-cat="菇類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="杏鮑菇" data-price="40"></td><td class="name">杏鮑菇</td><td class="note">菇類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">40 元</td></tr>
+            <tr data-price="45" data-name="香菇" data-cat="菇類" data-cook="蒸烤炒皆宜" data-weight="250"><td><input type="checkbox" class="veg-check" data-name="香菇" data-price="45"></td><td class="name">香菇</td><td class="note">菇類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 250g</td><td class="num price">45 元</td></tr>
+            <tr data-price="25" data-name="金針菇" data-cat="菇類" data-cook="不建議烤" data-weight="200"><td><input type="checkbox" class="veg-check" data-name="金針菇" data-price="25"></td><td class="name">金針菇</td><td class="note">菇類</td><td class="note">不建議烤</td><td class="num weight">約 200g</td><td class="num price">25 元</td></tr>
+            <tr data-price="35" data-name="秀珍菇" data-cat="菇類" data-cook="蒸烤炒皆宜" data-weight="250"><td><input type="checkbox" class="veg-check" data-name="秀珍菇" data-price="35"></td><td class="name">秀珍菇</td><td class="note">菇類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 250g</td><td class="num price">35 元</td></tr>
+            <tr data-price="45" data-name="蘑菇" data-cat="菇類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="蘑菇" data-price="45"></td><td class="name">蘑菇</td><td class="note">菇類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">45 元</td></tr>
+            <tr data-price="30" data-name="木耳" data-cat="菇類" data-cook="不建議烤" data-weight="200"><td><input type="checkbox" class="veg-check" data-name="木耳" data-price="30"></td><td class="name">木耳</td><td class="note">菇類</td><td class="note">不建議烤</td><td class="num weight">約 200g</td><td class="num price">30 元</td></tr>
+            <tr data-price="40" data-name="南瓜" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="500"><td><input type="checkbox" class="veg-check" data-name="南瓜" data-price="40"></td><td class="name">南瓜</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 500g</td><td class="num price">40 元</td></tr>
+            <tr data-price="35" data-name="地瓜" data-cat="根莖類" data-cook="蒸烤炒皆宜" data-weight="500"><td><input type="checkbox" class="veg-check" data-name="地瓜" data-price="35"></td><td class="name">地瓜</td><td class="note">根莖類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 500g</td><td class="num price">35 元</td></tr>
+            <tr data-price="35" data-name="馬鈴薯" data-cat="根莖類" data-cook="蒸烤炒皆宜" data-weight="500"><td><input type="checkbox" class="veg-check" data-name="馬鈴薯" data-price="35"></td><td class="name">馬鈴薯</td><td class="note">根莖類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 500g</td><td class="num price">35 元</td></tr>
+            <tr data-price="45" data-name="芋頭" data-cat="根莖類" data-cook="蒸烤炒皆宜" data-weight="450"><td><input type="checkbox" class="veg-check" data-name="芋頭" data-price="45"></td><td class="name">芋頭</td><td class="note">根莖類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 450g</td><td class="num price">45 元</td></tr>
+            <tr data-price="45" data-name="彩椒" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="350"><td><input type="checkbox" class="veg-check" data-name="彩椒" data-price="45"></td><td class="name">彩椒</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 350g</td><td class="num price">45 元</td></tr>
+            <tr data-price="35" data-name="青椒" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="青椒" data-price="35"></td><td class="name">青椒</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">35 元</td></tr>
+            <tr data-price="35" data-name="櫛瓜" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="櫛瓜" data-price="35"></td><td class="name">櫛瓜</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 400g</td><td class="num price">35 元</td></tr>
+            <tr data-price="45" data-name="玉米筍" data-cat="筍類" data-cook="蒸烤炒皆宜" data-weight="250"><td><input type="checkbox" class="veg-check" data-name="玉米筍" data-price="45"></td><td class="name">玉米筍</td><td class="note">筍類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 250g</td><td class="num price">45 元</td></tr>
+            <tr data-price="25" data-name="洋蔥" data-cat="根莖類" data-cook="蒸烤炒皆宜" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="洋蔥" data-price="25"></td><td class="name">洋蔥</td><td class="note">根莖類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 400g</td><td class="num price">25 元</td></tr>
+            <tr data-price="45" data-name="小番茄" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="小番茄" data-price="45"></td><td class="name">小番茄</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">45 元</td></tr>
+            <tr data-price="55" data-name="蘆筍" data-cat="筍類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="蘆筍" data-price="55"></td><td class="name">蘆筍</td><td class="note">筍類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">55 元</td></tr>
+            <tr data-price="55" data-name="山藥" data-cat="根莖類" data-cook="蒸烤炒皆宜" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="山藥" data-price="55"></td><td class="name">山藥</td><td class="note">根莖類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 400g</td><td class="num price">55 元</td></tr>
+            <tr data-price="35" data-name="毛豆" data-cat="豆莢類" data-cook="不建議烤" data-weight="250"><td><input type="checkbox" class="veg-check" data-name="毛豆" data-price="35"></td><td class="name">毛豆</td><td class="note">豆莢類</td><td class="note">不建議烤</td><td class="num weight">約 250g</td><td class="num price">35 元</td></tr>
+            <tr data-price="45" data-name="菱白筍" data-cat="筍類" data-cook="蒸烤炒皆宜" data-weight="350"><td><input type="checkbox" class="veg-check" data-name="菱白筍" data-price="45"></td><td class="name">菱白筍</td><td class="note">筍類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 350g</td><td class="num price">45 元</td></tr>
+            <tr data-price="50" data-name="春筍" data-cat="筍類" data-cook="蒸烤炒皆宜" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="春筍" data-price="50"></td><td class="name">春筍</td><td class="note">筍類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 400g</td><td class="num price">50 元</td></tr>
+            <tr data-price="30" data-name="小黃瓜" data-cat="瓜果類" data-cook="不建議烤" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="小黃瓜" data-price="30"></td><td class="name">小黃瓜</td><td class="note">瓜果類</td><td class="note">不建議烤</td><td class="num weight">約 400g</td><td class="num price">30 元</td></tr>
+            <tr data-price="35" data-name="小白菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="小白菜" data-price="35"></td><td class="name">小白菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 400g</td><td class="num price">35 元</td></tr>
+            <tr data-price="40" data-name="菠菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="菠菜" data-price="40"></td><td class="name">菠菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 300g</td><td class="num price">40 元</td></tr>
+            <tr data-price="35" data-name="空心菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="350"><td><input type="checkbox" class="veg-check" data-name="空心菜" data-price="35"></td><td class="name">空心菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 350g</td><td class="num price">35 元</td></tr>
+            <tr data-price="35" data-name="青江菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="青江菜" data-price="35"></td><td class="name">青江菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 400g</td><td class="num price">35 元</td></tr>
+            <tr data-price="40" data-name="娃娃菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="娃娃菜" data-price="40"></td><td class="name">娃娃菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 400g</td><td class="num price">40 元</td></tr>
+            <tr data-price="50" data-name="龍鬚菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="250"><td><input type="checkbox" class="veg-check" data-name="龍鬚菜" data-price="50"></td><td class="name">龍鬚菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 250g</td><td class="num price">50 元</td></tr>
+            <tr data-price="55" data-name="水蓮" data-cat="葉菜類" data-cook="不建議烤" data-weight="250"><td><input type="checkbox" class="veg-check" data-name="水蓮" data-price="55"></td><td class="name">水蓮</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 250g</td><td class="num price">55 元</td></tr>
+            <tr data-price="40" data-name="茼蒿" data-cat="葉菜類" data-cook="不建議烤" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="茼蒿" data-price="40"></td><td class="name">茼蒿</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 300g</td><td class="num price">40 元</td></tr>
+            <tr data-price="45" data-name="西洋菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="西洋菜" data-price="45"></td><td class="name">西洋菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 300g</td><td class="num price">45 元</td></tr>
+            <tr data-price="25" data-name="嫩豆腐" data-cat="豆製品" data-cook="不建議烤" data-weight="600"><td><input type="checkbox" class="veg-check" data-name="嫩豆腐" data-price="25"></td><td class="name">嫩豆腐</td><td class="note">豆製品</td><td class="note">不建議烤</td><td class="num weight">約 600g</td><td class="num price">25 元</td></tr>
+            <tr data-price="40" data-name="大番茄" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="400"><td><input type="checkbox" class="veg-check" data-name="大番茄" data-price="40"></td><td class="name">大番茄</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 400g</td><td class="num price">40 元</td></tr>
+            <tr data-price="25" data-name="蒜頭" data-cat="辛香料" data-cook="不建議烤" data-weight="100"><td><input type="checkbox" class="veg-check" data-name="蒜頭" data-price="25"></td><td class="name">蒜頭</td><td class="note">辛香料</td><td class="note">不建議烤</td><td class="num weight">約 100g</td><td class="num price">25 元</td></tr>
+            <tr data-price="40" data-name="大白菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="800"><td><input type="checkbox" class="veg-check" data-name="大白菜" data-price="40"></td><td class="name">大白菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 800g</td><td class="num price">40 元</td></tr>
+            <tr data-price="35" data-name="美生菜" data-cat="葉菜類" data-cook="不建議烤" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="美生菜" data-price="35"></td><td class="name">美生菜</td><td class="note">葉菜類</td><td class="note">不建議烤</td><td class="num weight">約 300g</td><td class="num price">35 元</td></tr>
+            <tr data-price="40" data-name="玉米粒" data-cat="瓜果類" data-cook="蒸烤炒皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="玉米粒" data-price="40"></td><td class="name">玉米粒</td><td class="note">瓜果類</td><td class="note">蒸烤炒皆宜</td><td class="num weight">約 300g</td><td class="num price">40 元</td></tr>
+            <tr data-price="120" data-name="德國香腸" data-cat="加工肉品（非蔬菜）" data-cook="煎烤皆宜" data-weight="300"><td><input type="checkbox" class="veg-check" data-name="德國香腸" data-price="120"></td><td class="name">德國香腸</td><td class="note">加工肉品（非蔬菜）</td><td class="note">煎烤皆宜</td><td class="num weight">約 300g</td><td class="num price">120 元</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="builder-bar">
+        <div class="builder-summary">已勾選 <b id="vegSelCount" class="num">0</b> 樣・小計 <b id="vegSelSum" class="num">$0</b></div>
+        <input type="text" id="vegComboName" placeholder="幫這個組合命名，例如：家常什錦湯">
+        <button type="button" class="builder-btn" id="vegConfirmBtn" disabled>確認新增到搭配總和表</button>
+        <button type="button" class="builder-btn ghost" id="vegClearBtn">清空勾選</button>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px; font-weight:700; margin:8px 0 0;">蔬菜搭配總和表<span style="font-weight:400; font-size:12px; color:var(--ink-muted); margin-left:6px;">（這些卡片存在這個瀏覽器裡，換裝置或清瀏覽器資料會不見，不會同步）</span></h3>
+    <div class="combo-grid" id="comboGrid"></div>
+    <p class="sub" style="margin-top:-4px;">兩週試算預設用平均 <b class="num">140 元</b>／天，可在下面試算表改自訂。</p>
+    <details class="more"><summary>組合價格怎麼分布</summary><p class="more-body">湯底類組合（例如什錦湯）通常 150–165 元，快炒／烤箱類配菜 35–140 元不等，都可以點卡片上的 ✎ 編輯調整。</p></details>
+  </section>
+
+  <!-- SECTION C: 主食搭配 -->
+  <section id="staple" hidden>
+    <div class="section-head">
+      <span class="section-tag">主食搭配</span>
+      <h2>主食搭配表（四人份）</h2>
+      <p class="sub">整包裝抓包裝價，根莖類用市場估價，另外補了幾款上下游麵食可以輪替。</p>
+      <details class="more"><summary>品項來源</summary><p class="more-body">五穀米、全麥麵是你原本就在買的整包裝；蕎麥麵、彩虹蔬菜麵、玉米麵條都是上下游市集實際商品。</p></details>
+    </div>
+    <div class="item-grid">
+      <div class="item-card">
+        <div class="iname">五穀米</div>
+        <div class="ispec num">3 杯生米（480g）</div>
+        <div class="isource">1000g／139 元包裝，已確認</div>
+        <div class="ifoot"><span class="iprice num">約 67 元</span></div><button type="button" class="iapply" data-price="67">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">全麥麵</div>
+        <div class="ispec num">一整包 3 束（270g）</div>
+        <div class="isource">上下游日曬全麥麵，已確認</div>
+        <div class="ifoot"><span class="iprice num">95 元</span></div><button type="button" class="iapply" data-price="95">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">本土蕎麥麵</div>
+        <div class="ispec num">一整包 3 束（300g）</div>
+        <div class="isource">上下游商品，51% 蕎麥＋49% 小麥粉，查詢時缺貨，下單前需確認</div>
+        <div class="ifoot"><span class="iprice num">120 元</span></div><button type="button" class="iapply" data-price="120">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">彩虹米麥麵條</div>
+        <div class="ispec num">一整包（300g）</div>
+        <div class="isource">上下游商品，米＋麥＋7 種美濃蔬菜，查詢時缺貨，下單前需確認</div>
+        <div class="ifoot"><span class="iprice num">110 元</span></div><button type="button" class="iapply" data-price="110">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">100% 純米麵條</div>
+        <div class="ispec num">一整包（300g）</div>
+        <div class="isource">上下游商品，無麩質選項</div>
+        <div class="ifoot"><span class="iprice num">130 元</span></div><button type="button" class="iapply" data-price="130">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">本土玉米麵條</div>
+        <div class="ispec num">未標重量，估一包四人份</div>
+        <div class="isource">上下游商品，100% 台灣玉米［估重量］</div>
+        <div class="ifoot"><span class="iprice num">150 元</span></div><button type="button" class="iapply" data-price="150">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">地瓜／馬鈴薯</div>
+        <div class="ispec num">約 800g（去皮前）</div>
+        <div class="isource">傳統市場估 45 元／kg［估價，未核對］</div>
+        <div class="ifoot"><span class="iprice num">約 36 元</span></div><button type="button" class="iapply" data-price="36">套用到試算器（設為每日主食預算）</button>
+      </div>
+      <div class="item-card">
+        <div class="iname">玉米（整支）</div>
+        <div class="ispec num">4 支</div>
+        <div class="isource">估每支 20 元［估價，未核對］</div>
+        <div class="ifoot"><span class="iprice num">約 80 元</span></div><button type="button" class="iapply" data-price="80">套用到試算器（設為每日主食預算）</button>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:-4px;">兩週試算預設平均一天主食約 <b class="num">90 元</b>，可在試算器改自訂（例如每天吃玉米更便宜）。</p>
+    <details class="more"><summary>怎麼算出 90 元</summary><p class="more-body">多數上下游麵食四人份實際要 95–150 元，只有五穀米、地瓜等少數品項落在 70 元以下，改用「4 天五穀米、3 天全麥麵、3 天根莖／麵食輪替」估出約 90 元／天，比單純取最低價更貼近實際採買。</p></details>
+  </section>
+
+  <!-- SECTION E: 每份參考價 -->
+  <section id="perportion" hidden>
+    <div class="section-head">
+      <span class="section-tag">每份參考價</span>
+      <h2>五階每份（每人一餐）蛋白質參考價</h2>
+      <p class="sub">前面的分級表是「四人份」的價格，這裡直接除以 4，給你點菜或估單餐成本時用。</p>
+    </div>
+    <div class="portion-grid">
+      <div class="portion-tile" style="background:var(--tier-xs); color:var(--tier-xs-ink);">
+        <span class="ptier">平價省錢</span>
+        <span class="pportion num">$25</span>
+        <span class="pfour num">四人份 100 元</span>
+        <span class="pnote">代表食材：蛋、蛤蜊</span>
+      </div>
+      <div class="portion-tile" style="background:var(--tier-s); color:var(--tier-s-ink);">
+        <span class="ptier">日常超值</span>
+        <span class="pportion num">$45</span>
+        <span class="pfour num">四人份 180 元</span>
+        <span class="pnote">代表食材：醃雞丁、醃豬肉絲</span>
+      </div>
+      <div class="portion-tile" style="background:var(--tier-m); color:var(--tier-m-ink);">
+        <span class="ptier">標準均衡</span>
+        <span class="pportion num">$65</span>
+        <span class="pfour num">四人份 260 元</span>
+        <span class="pnote">代表食材：雞胸、雞里肌、黃金土雞切塊、雞翅</span>
+      </div>
+      <div class="portion-tile" style="background:var(--tier-l); color:var(--tier-l-ink);">
+        <span class="ptier">豐盛美味</span>
+        <span class="pportion num">$99</span>
+        <span class="pfour num">四人份 395 元</span>
+        <span class="pnote">代表食材：豬梅花、白蝦</span>
+      </div>
+      <div class="portion-tile" style="background:var(--tier-xl); color:var(--tier-xl-ink);">
+        <span class="ptier">奢華享受</span>
+        <span class="pportion num">$180</span>
+        <span class="pfour num">四人份 約 720 元</span>
+        <span class="pnote">代表食材：雞腿肉、蝦仁</span>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:-4px;">加上蔬菜（約 35 元／人）、主食（約 23 元／人）才是整餐價。</p>
+    <p class="sub" style="margin-top:-4px;">這裡是「假設整個規劃天數都吃同一個分級」的單價，試算器裡的「每份平均」則是你實際混搭的分級＋便當天數算出來的均價，兩邊本來就不會一樣，不是算錯。</p>
+    <details class="more"><summary>奢華享受數字怎麼算</summary><p class="more-body">四人份成本一律除以 4＝單人每餐成本，跟試算器、分級表用同一組價格（100／180／260／395／720 元），不會再有兜不起來的小數點。奢華享受級改用雞腿肉、蝦仁的平均值（牛肋眼單份太貴，不列入日常平均），比先前的估算更貼近實際採買。</p></details>
+  </section>
+
+  <footer>
+    <details class="more">
+      <summary>數據基準：2026/09 市場查價．僅供備餐預算估算參考</summary>
+      <p class="more-body">資料整理：2026 年 9 月・依你確認的放山雞胸 130g/100 元、便當 200 元等數字更新。以下 4 點是還沒核實或用估算法抓的數字：</p>
+      <ul>
+        <li>豬里肌、牛小排、牛板腱、干貝這幾樣，有心目前查不到單獨品項，建議改到富好市場或其他管道買；金目鱸魚切塊、虱目魚菲力目前只查到分類頁價格，個別商品頁面查不到，重量暫時無法核實。</li>
+        <li>蔬菜組合價格沒有實際核價，是用批發均價（高麗菜約 38 元/kg）抓 1.5～2 倍當零售價估算的。</li>
+        <li>地瓜、馬鈴薯、玉米沒有查到目前零售價，用一般行情估算。</li>
+        <li>三種排法的「平均分散」天數是我抓的合理預設，不是唯一分法，你可以照喜好調整各分級（平價省錢～奢華享受）各自的天數再重新試算。</li>
+      </ul>
+    </details>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  // ---- Section -1: view router (dashboard card wall <-> detail pages) ----
+  try{
+    var VIEWS = ['compare','menu','protein','veg','staple','perportion'];
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll('.topnav-links a'));
+
+    function showView(id){
+      if(VIEWS.indexOf(id)===-1) id = 'compare';
+      VIEWS.forEach(function(v){
+        var node = document.getElementById(v);
+        if(node) node.hidden = (v!==id);
+      });
+      navLinks.forEach(function(a){
+        a.classList.toggle('is-active', a.getAttribute('data-nav')===id);
+      });
+      window.scrollTo(0,0);
+      if(window.history && history.replaceState) history.replaceState(null, '', '#'+id);
+      if(id==='menu' && window.renderMenu) window.renderMenu();
+    }
+    window.showView = showView; // exposed so other sections (e.g. "套用到試算器") can switch views
+
+    navLinks.forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        showView(a.getAttribute('data-nav'));
+      });
+    });
+    document.querySelectorAll('[data-view]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        showView(btn.getAttribute('data-view'));
+      });
+    });
+
+    var initial = (location.hash || '#compare').replace('#','');
+    showView(initial);
+  }catch(e){}
+})();
+
+(function(){
+  // ---- Section 0: tag table cells with data-label for the mobile card layout ----
+  try{
+    document.querySelectorAll('.table-scroll table, .veg-builder table').forEach(function(table){
+      var headerCells = table.querySelectorAll('thead th');
+      if(!headerCells.length) return;
+      var labels = Array.prototype.map.call(headerCells, function(th){
+        var btn = th.querySelector('.sort-th');
+        if(btn){
+          var clone = btn.cloneNode(true);
+          var ind = clone.querySelector('.sort-ind');
+          if(ind) ind.remove();
+          return clone.textContent.trim();
+        }
+        return th.textContent.trim();
+      });
+      table.querySelectorAll('tbody tr').forEach(function(tr){
+        var col = 0;
+        Array.prototype.forEach.call(tr.children, function(td){
+          var span = parseInt(td.getAttribute('colspan')||'1', 10) || 1;
+          if(span===1 && labels[col]) td.setAttribute('data-label', labels[col]);
+          col += span;
+        });
+      });
+    });
+  }catch(e){}
+})();
+
+(function(){
+  // ---- Section A: protein tier tabs ----
+  try{
+    var tabBtns = document.querySelectorAll('.tab-btn');
+    var tabPanels = document.querySelectorAll('.tab-panel');
+    tabBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var key = btn.getAttribute('data-tab');
+        tabBtns.forEach(function(b){
+          var active = b===btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', active ? 'true':'false');
+        });
+        tabPanels.forEach(function(p){ p.hidden = p.getAttribute('data-panel')!==key; });
+      });
+    });
+  }catch(e){}
+})();
+
+(function(){
+  // ---- Section B: vegetable price builder ----
+  try{
+    var STORE_KEY = 'vegCustomCombos_v1';
+    var SEED_KEY = 'vegPresetSeeded_v6';
+    var PRESET_COMBOS = [
+      {id:'preset-tomato-a', name:'萬用蔬菜組｜蕃茄版', items:['大番茄','娃娃菜','金針菇','木耳','嫩豆腐']},
+      {id:'preset-tomato-b', name:'萬用蔬菜組', items:['娃娃菜','金針菇','木耳','嫩豆腐']},
+      {id:'preset-leafy', name:'快炒單一葉菜（可換龍鬚菜／水蓮）', items:['空心菜','蒜頭']},
+      {id:'preset-mushroom', name:'菇菇雙拼組', items:['杏鮑菇','秀珍菇']},
+      {id:'preset-oven-veg', name:'烤蔬菜拼盤', items:['青椒','玉米筍','櫛瓜','洋蔥','小番茄','杏鮑菇','南瓜','馬鈴薯']},
+      {id:'preset-oven-root', name:'豪華燉湯組', items:['香菇','金針菇','大白菜','嫩豆腐']},
+      {id:'preset-cabbage', name:'濃湯/咖哩/燉肉組', items:['高麗菜','洋蔥','馬鈴薯','德國香腸','花椰菜（綠／白）']},
+      {id:'preset-podveg', name:'沙拉蔬菜組', items:['四季豆','毛豆','美生菜','小黃瓜','玉米粒']},
+      {id:'preset-harvard', name:'哈佛湯底', items:['高麗菜','南瓜','洋蔥','大番茄']},
+      {id:'preset-stirfry', name:'快炒一鍋組合', items:['杏鮑菇','木耳','玉米筍','洋蔥','空心菜']}
+    ];
+    var grid = document.getElementById('comboGrid');
+    var confirmBtn = document.getElementById('vegConfirmBtn');
+    var clearBtn = document.getElementById('vegClearBtn');
+    var nameInput = document.getElementById('vegComboName');
+    var selCountEl = document.getElementById('vegSelCount');
+    var selSumEl = document.getElementById('vegSelSum');
+
+    function checks(){ return Array.prototype.slice.call(document.querySelectorAll('.veg-check')); }
+
+    function priceMap(){
+      var map = {};
+      checks().forEach(function(c){ map[c.getAttribute('data-name')] = Number(c.getAttribute('data-price')); });
+      return map;
+    }
+
+    // seeds the default preset combos into localStorage on first visit, and — gated
+    // behind SEED_KEY so it only ever runs once per browser — upgrades any combo whose
+    // id still matches a known preset id to this version's name/items/price (so a
+    // content update here reaches viewers who already had the old presets seeded),
+    // while leaving any of the viewer's own custom (non-preset-id) combos untouched.
+    // Also drops a viewer's own custom combo if its NAME matches a preset that is
+    // being (re)seeded — this covers the case where the viewer had already hand-built
+    // a combo (via the ✎/add UI) that later gets added here as an official preset,
+    // which would otherwise leave two identically-named cards on the board.
+    function seedPresetsIfNeeded(){
+      try{
+        if(localStorage.getItem(SEED_KEY)) return;
+        var pm = priceMap();
+        var arr = loadSaved();
+        var indexById = {};
+        arr.forEach(function(c, i){ indexById[c.id] = i; });
+        var presetIds = {};
+        var presetNames = {};
+        PRESET_COMBOS.forEach(function(p){
+          presetIds[p.id] = true;
+          presetNames[p.name] = true;
+          var price = p.items.reduce(function(a,n){ return a + (pm[n]||0); }, 0);
+          var updated = {id:p.id, name:p.name, items:p.items, price:price};
+          if(indexById.hasOwnProperty(p.id)){
+            arr[indexById[p.id]] = updated;
+          } else {
+            arr.push(updated);
+          }
+        });
+        arr = arr.filter(function(c){
+          return presetIds[c.id] || !presetNames[c.name];
+        });
+        saveAll(arr);
+        localStorage.setItem(SEED_KEY, '1');
+      }catch(e){}
+    }
+
+    // ---- sortable header ----
+    (function(){
+      var body = document.getElementById('vegItemsBody');
+      var sortBtns = document.querySelectorAll('.sort-th');
+      if(!body || !sortBtns.length) return;
+      var defaultDir = {name:'asc', cat:'asc', cook:'asc', price:'desc', weight:'desc'};
+      var state = {key:null, dir:'asc'};
+      sortBtns.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var key = btn.getAttribute('data-sort');
+          if(state.key===key){
+            state.dir = state.dir==='asc' ? 'desc' : 'asc';
+          }else{
+            state.key = key;
+            state.dir = defaultDir[key] || 'asc';
+          }
+          var rows = Array.prototype.slice.call(body.querySelectorAll('tr'));
+          rows.sort(function(a,b){
+            var av, bv;
+            if(key==='price' || key==='weight'){
+              av = Number(a.getAttribute('data-'+key));
+              bv = Number(b.getAttribute('data-'+key));
+              return state.dir==='asc' ? av-bv : bv-av;
+            }
+            av = a.getAttribute('data-'+key) || '';
+            bv = b.getAttribute('data-'+key) || '';
+            var cmp = av.localeCompare(bv, 'zh-Hant');
+            return state.dir==='asc' ? cmp : -cmp;
+          });
+          rows.forEach(function(r){ body.appendChild(r); });
+          sortBtns.forEach(function(b){
+            var active = b===btn;
+            b.classList.toggle('is-active', active);
+            var ind = b.querySelector('.sort-ind');
+            if(ind) ind.textContent = active ? (state.dir==='asc' ? '▲' : '▼') : '';
+          });
+        });
+      });
+    })();
+
+    function updateSummary(){
+      var checked = checks().filter(function(c){ return c.checked; });
+      var sum = checked.reduce(function(a,c){ return a+Number(c.getAttribute('data-price')); },0);
+      selCountEl.textContent = checked.length;
+      selSumEl.textContent = '$'+sum;
+      confirmBtn.disabled = checked.length===0;
+      checks().forEach(function(c){
+        var row = c.closest('tr');
+        if(row) row.classList.toggle('is-checked', c.checked);
+      });
+    }
+
+    function loadSaved(){
+      try{
+        var raw = localStorage.getItem(STORE_KEY);
+        if(!raw) return [];
+        var arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      }catch(e){ return []; }
+    }
+    function saveAll(arr){
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(arr)); }catch(e){}
+    }
+
+    var editingId = null;
+    var CONFIRM_LABEL_NEW = '確認新增到搭配總和表';
+    var CONFIRM_LABEL_EDIT = '更新這個組合';
+    var CLEAR_LABEL_NEW = '清空勾選';
+    var CLEAR_LABEL_EDIT = '取消編輯';
+
+    function renderCard(combo){
+      var card = document.createElement('div');
+      card.className = 'combo-card is-editable';
+      card.setAttribute('data-combo-id', combo.id);
+      card.title = '雙擊卡片可編輯';
+      card.innerHTML =
+        '<button type="button" class="cedit" aria-label="編輯這個組合">✎</button>'+
+        '<button type="button" class="cdel" aria-label="移除這個組合">×</button>'+
+        '<div class="ctitle"></div>'+
+        '<div class="citems"></div>'+
+        '<div class="cfoot"><span class="cprice num"></span><span class="cflag">自訂</span></div>'+
+        '<button type="button" class="capply">套用到試算器（設為每日蔬菜預算）</button>';
+      card.querySelector('.ctitle').textContent = combo.name;
+      card.querySelector('.citems').textContent = combo.items.join('、');
+      card.querySelector('.cprice').textContent = '約 '+combo.price+' 元';
+      card.querySelector('.capply').addEventListener('click', function(e){
+        e.stopPropagation();
+        if(window.applyToCalc) window.applyToCalc('veg', combo.price);
+      });
+      card.querySelector('.cdel').addEventListener('click', function(){
+        card.remove();
+        var arr = loadSaved().filter(function(c){ return c.id!==combo.id; });
+        saveAll(arr);
+        if(editingId===combo.id) endEdit();
+        syncDashCount();
+        if(window.renderMenu) window.renderMenu();
+      });
+      card.querySelector('.cedit').addEventListener('click', function(){
+        startEdit(combo);
+      });
+      card.addEventListener('dblclick', function(e){
+        if(e.target.closest('.cdel, .cedit')) return;
+        startEdit(combo);
+      });
+      grid.appendChild(card);
+    }
+
+    var editBanner = document.getElementById('editBanner');
+    var editBannerName = document.getElementById('editBannerName');
+    var editBannerCancel = document.getElementById('editBannerCancel');
+
+    function startEdit(combo){
+      editingId = combo.id;
+      checks().forEach(function(c){
+        c.checked = combo.items.indexOf(c.getAttribute('data-name')) !== -1;
+      });
+      nameInput.value = combo.name;
+      nameInput.classList.remove('is-invalid');
+      confirmBtn.textContent = CONFIRM_LABEL_EDIT;
+      clearBtn.textContent = CLEAR_LABEL_EDIT;
+      if(editBanner){
+        editBannerName.textContent = combo.name;
+        editBanner.hidden = false;
+      }
+      updateSummary();
+      nameInput.focus();
+      nameInput.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    function endEdit(){
+      editingId = null;
+      confirmBtn.textContent = CONFIRM_LABEL_NEW;
+      clearBtn.textContent = CLEAR_LABEL_NEW;
+      if(editBanner) editBanner.hidden = true;
+    }
+
+    function syncDashCount(){
+      var d = null; // dashboard removed — comboCount no longer displayed here
+      if(d) d.textContent = grid.children.length;
+    }
+
+    seedPresetsIfNeeded();
+    loadSaved().forEach(renderCard);
+    syncDashCount();
+
+    checks().forEach(function(c){ c.addEventListener('change', updateSummary); });
+    nameInput.addEventListener('input', function(){ nameInput.classList.remove('is-invalid'); });
+
+    confirmBtn.addEventListener('click', function(){
+      var checked = checks().filter(function(c){ return c.checked; });
+      if(checked.length===0) return;
+      var name = nameInput.value.trim();
+      if(!name){
+        nameInput.classList.add('is-invalid');
+        nameInput.focus();
+        return;
+      }
+      var items = checked.map(function(c){ return c.getAttribute('data-name'); });
+      var price = checked.reduce(function(a,c){ return a+Number(c.getAttribute('data-price')); },0);
+      var arr = loadSaved();
+      if(editingId){
+        var idx = -1;
+        for(var i=0;i<arr.length;i++){ if(arr[i].id===editingId){ idx=i; break; } }
+        var updated = {id: editingId, name: name, items: items, price: price};
+        if(idx>-1){ arr[idx] = updated; } else { arr.push(updated); }
+        saveAll(arr);
+        var oldCard = grid.querySelector('[data-combo-id="'+editingId+'"]');
+        if(oldCard) oldCard.remove();
+        renderCard(updated);
+        endEdit();
+      }else{
+        var combo = {id: 'c'+Date.now(), name: name, items: items, price: price};
+        arr.push(combo); saveAll(arr);
+        renderCard(combo);
+      }
+      checks().forEach(function(c){ c.checked=false; });
+      nameInput.value = '';
+      updateSummary();
+      syncDashCount();
+      if(window.renderMenu) window.renderMenu();
+    });
+
+    clearBtn.addEventListener('click', function(){
+      checks().forEach(function(c){ c.checked=false; });
+      nameInput.value = '';
+      nameInput.classList.remove('is-invalid');
+      endEdit();
+      updateSummary();
+    });
+
+    if(editBannerCancel){
+      editBannerCancel.addEventListener('click', function(){
+        checks().forEach(function(c){ c.checked=false; });
+        nameInput.value = '';
+        nameInput.classList.remove('is-invalid');
+        endEdit();
+        updateSummary();
+      });
+    }
+
+    updateSummary();
+
+    // exposed for the AI 食譜靈感 feature (排菜 section, separate closure): creates a
+    // combo card for a set of vegetable item names — reusing an existing combo whose
+    // item set matches exactly, rather than creating a near-duplicate — and returns
+    // its current position in the live combo grid (the same order getVegPool() reads),
+    // so the caller can select it as a day's veg pick straight away.
+    window.upsertAiCombo = function(name, items){
+      try{
+        if(!items || !items.length) return -1;
+        var arr = loadSaved();
+        var itemsSorted = items.slice().sort();
+        var existing = null;
+        for(var i=0;i<arr.length;i++){
+          var cs = (arr[i].items||[]).slice().sort();
+          if(cs.length===itemsSorted.length && cs.every(function(v,idx){ return v===itemsSorted[idx]; })){
+            existing = arr[i];
+            break;
+          }
+        }
+        var combo;
+        if(existing){
+          combo = existing;
+        } else {
+          var pm = priceMap();
+          var price = items.reduce(function(a,n){ return a+(pm[n]||0); }, 0);
+          combo = {id:'c'+Date.now(), name:name, items:items, price:price};
+          arr.push(combo);
+          saveAll(arr);
+          renderCard(combo);
+          syncDashCount();
+        }
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.combo-card'));
+        for(var j=0;j<cards.length;j++){
+          if(cards[j].getAttribute('data-combo-id')===combo.id) return j;
+        }
+        return -1;
+      }catch(e){ return -1; }
+    };
+  }catch(e){}
+})();
+
+(function(){
+  var TIER_PRICE = {XS:100,S:180,M:260,L:395,XL:720};
+  var TIER_NAME = {XS:'平價省錢',S:'日常超值',M:'標準均衡',L:'豐盛美味',XL:'奢華享受'};
+  var BENTO_PRICE = 800;
+  var VEG_PER_DAY = 140;
+  var STAPLE_PER_DAY = 90;
+  var DEFAULT_TOTAL_DAYS = 14;
+  var MIN_TOTAL_DAYS = 1, MAX_TOTAL_DAYS = 120;
+  var KEYS = ['bento','XS','S','M','L','XL'];
+  var MENU_TIERS = ['XS','S','M','L','XL'];
+  var REF = {one:0, two:0, three:0}; // filled in by initRef(), computed from PRESETS + compute()
+  var PRESETS = {
+    one:  {bento:4, XS:3, S:3, M:3, L:1, XL:0},
+    two:  {bento:4, XS:2, S:3, M:2, L:2, XL:1},
+    three:{bento:4, XS:2, S:2, M:2, L:2, XL:2},
+    clear:{bento:0, XS:0, S:0, M:0, L:0, XL:0}
+  };
+
+  // scales a {bento,XS,S,M,L,XL} count object to sum to exactly `totalDays`,
+  // keeping each key's share of the total as close as possible to `basis`'s own
+  // ratios (largest-remainder method, so the six rounded shares always add back
+  // up to totalDays exactly instead of drifting off by a day from plain rounding).
+  // Used both to scale a preset (whose own counts always sum to 14) onto whatever
+  // total the user picked, and to reflow the user's *current* counts onto a newly
+  // picked total. All-zero basis (e.g. the "清空重排" preset, or a freshly cleared
+  // plan) scales to all-zero regardless of totalDays — nothing to redistribute.
+  function distributeDays(basis, totalDays){
+    totalDays = Math.max(0, Math.round(totalDays)||0);
+    var baseSum = KEYS.reduce(function(a,k){ return a+(basis[k]||0); }, 0);
+    var result = {};
+    if(baseSum<=0 || totalDays<=0){
+      KEYS.forEach(function(k){ result[k] = 0; });
+      return result;
+    }
+    var raw = KEYS.map(function(k){ return (basis[k]||0)/baseSum*totalDays; });
+    var floors = raw.map(Math.floor);
+    var used = floors.reduce(function(a,b){ return a+b; }, 0);
+    var remainder = totalDays - used;
+    var order = raw.map(function(v,i){ return {i:i, frac:v-Math.floor(v)}; })
+                    .sort(function(a,b){ return b.frac-a.frac; });
+    for(var r=0; r<remainder; r++){ floors[order[r%order.length].i]++; }
+    KEYS.forEach(function(k,i){ result[k] = floors[i]; });
+    return result;
+  }
+
+  // ---- plan persistence: autosave to this browser + named saved plans ----
+  var AUTOSAVE_KEY = 'mealPlanAutosave_v1';
+  var SAVED_PLANS_KEY = 'mealPlanSaved_v1';
+
+  function defaultState(){
+    return Object.assign({}, PRESETS.one, {
+      totalDays: DEFAULT_TOTAL_DAYS,
+      vegMode:'avg', vegCustom:140,
+      stapleMode:'avg', stapleCustom:90,
+      bentoMode:'avg', bentoCustom:800,
+      menu:{protein:{XS:[], S:[], M:[], L:[], XL:[]}, veg:[], staple:[]}
+    });
+  }
+
+  // builds a JSON-safe copy of the fields worth persisting (planning-period length,
+  // tier day counts, veg/staple/bento pricing mode, and every 排菜 pick) — leaves
+  // out nothing, adds nothing.
+  function snapshotState(s){
+    return {
+      totalDays:s.totalDays,
+      bento:s.bento, XS:s.XS, S:s.S, M:s.M, L:s.L, XL:s.XL,
+      vegMode:s.vegMode, vegCustom:s.vegCustom,
+      stapleMode:s.stapleMode, stapleCustom:s.stapleCustom,
+      bentoMode:s.bentoMode, bentoCustom:s.bentoCustom,
+      menu:{
+        protein:{
+          XS:(s.menu.protein.XS||[]).slice(),
+          S:(s.menu.protein.S||[]).slice(),
+          M:(s.menu.protein.M||[]).slice(),
+          L:(s.menu.protein.L||[]).slice(),
+          XL:(s.menu.protein.XL||[]).slice()
+        },
+        veg:(s.menu.veg||[]).slice(),
+        staple:(s.menu.staple||[]).slice()
+      }
+    };
+  }
+
+  // turns a (possibly partial, possibly stale/foreign) snapshot — from localStorage,
+  // an imported file, or a saved plan — into a complete, safe state object, filling
+  // any missing/malformed field from defaultState() rather than trusting the input.
+  function normalizeSnapshot(snap){
+    var base = defaultState();
+    if(!snap || typeof snap!=='object') return base;
+    var next = Object.assign({}, base, snap);
+    KEYS.forEach(function(k){
+      next[k] = (typeof snap[k]==='number' && isFinite(snap[k]) && snap[k]>=0) ? snap[k] : base[k];
+    });
+    // older saved plans / autosaves predate the custom-days feature and have no
+    // totalDays field — default those to 14 (their day counts were always built
+    // against a 14-day plan) rather than the current DEFAULT_TOTAL_DAYS constant,
+    // in case that default is ever changed later.
+    next.totalDays = (typeof snap.totalDays==='number' && isFinite(snap.totalDays) && snap.totalDays>=MIN_TOTAL_DAYS)
+      ? Math.min(MAX_TOTAL_DAYS, Math.round(snap.totalDays)) : 14;
+    next.vegMode = snap.vegMode==='custom' ? 'custom' : 'avg';
+    next.stapleMode = snap.stapleMode==='custom' ? 'custom' : 'avg';
+    next.bentoMode = snap.bentoMode==='custom' ? 'custom' : 'avg';
+    next.vegCustom = (typeof snap.vegCustom!=='undefined') ? snap.vegCustom : base.vegCustom;
+    next.stapleCustom = (typeof snap.stapleCustom!=='undefined') ? snap.stapleCustom : base.stapleCustom;
+    next.bentoCustom = (typeof snap.bentoCustom!=='undefined') ? snap.bentoCustom : base.bentoCustom;
+    var menuSrc = (snap.menu && typeof snap.menu==='object') ? snap.menu : {};
+    var proteinSrc = (menuSrc.protein && typeof menuSrc.protein==='object') ? menuSrc.protein : {};
+    next.menu = {
+      protein:{
+        XS: Array.isArray(proteinSrc.XS) ? proteinSrc.XS : [],
+        S: Array.isArray(proteinSrc.S) ? proteinSrc.S : [],
+        M: Array.isArray(proteinSrc.M) ? proteinSrc.M : [],
+        L: Array.isArray(proteinSrc.L) ? proteinSrc.L : [],
+        XL: Array.isArray(proteinSrc.XL) ? proteinSrc.XL : []
+      },
+      veg: Array.isArray(menuSrc.veg) ? menuSrc.veg : [],
+      staple: Array.isArray(menuSrc.staple) ? menuSrc.staple : []
+    };
+    return next;
+  }
+
+  function loadAutosave(){
+    try{
+      var raw = localStorage.getItem(AUTOSAVE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function saveAutosave(snap){
+    try{ localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(snap)); }catch(e){}
+  }
+
+  function loadSavedPlans(){
+    try{
+      var raw = localStorage.getItem(SAVED_PLANS_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  function saveSavedPlans(arr){
+    try{ localStorage.setItem(SAVED_PLANS_KEY, JSON.stringify(arr)); }catch(e){}
+  }
+
+  var state = normalizeSnapshot(loadAutosave());
+
+  function sumDays(s){ return KEYS.reduce(function(a,k){ return a+s[k]; },0); }
+  function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+
+  function compute(s){
+    var cookDays = s.XS+s.S+s.M+s.L+s.XL;
+    var protein = s.XS*TIER_PRICE.XS + s.S*TIER_PRICE.S + s.M*TIER_PRICE.M + s.L*TIER_PRICE.L + s.XL*TIER_PRICE.XL;
+    var vegRate = s.vegMode==='custom' ? (Number(s.vegCustom)||0) : VEG_PER_DAY;
+    var stapleRate = s.stapleMode==='custom' ? (Number(s.stapleCustom)||0) : STAPLE_PER_DAY;
+    var veg = cookDays*vegRate;
+    var staple = cookDays*stapleRate;
+    var bentoRate = s.bentoMode==='custom' ? (Number(s.bentoCustom)||0) : BENTO_PRICE;
+    var bentoCost = s.bento*bentoRate;
+    var total = protein+veg+staple+bentoCost;
+    return {cookDays:cookDays, protein:protein, veg:veg, staple:staple, bentoCost:bentoCost, total:total};
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+
+  // pulls the first number out of a free-text price string (e.g. "約 200–250 元" -> 200);
+  // prices already read as approximate estimates elsewhere in this app, so a day's
+  // subtotal is shown the same way, always prefixed with "約".
+  function parsePriceNum(str){
+    if(!str) return 0;
+    var m = String(str).replace(/,/g,'').match(/\d+(\.\d+)?/);
+    return m ? Number(m[0]) : 0;
+  }
+
+  function buildProteinPools(){
+    var pools = {};
+    MENU_TIERS.forEach(function(t){
+      var panel = document.querySelector('.tab-panel[data-panel="'+t+'"]');
+      var cards = panel ? panel.querySelectorAll('.item-card:not(.is-missing)') : [];
+      pools[t] = Array.prototype.map.call(cards, function(card){
+        var nameEl = card.querySelector('.iname');
+        var priceEl = card.querySelector('.iprice');
+        var specEl = card.querySelector('.ispec');
+        return {
+          name: nameEl ? nameEl.textContent.trim() : '',
+          price: priceEl ? priceEl.textContent.trim() : '',
+          spec: specEl ? specEl.textContent.trim() : '',
+          suggested: card.classList.contains('is-suggested')
+        };
+      });
+    });
+    return pools;
+  }
+  var PROTEIN_POOLS = buildProteinPools();
+
+  function buildStaplePool(){
+    var panel = document.getElementById('staple');
+    var cards = panel ? panel.querySelectorAll('.item-grid .item-card:not(.is-missing)') : [];
+    return Array.prototype.map.call(cards, function(card){
+      var nameEl = card.querySelector('.iname');
+      var priceEl = card.querySelector('.iprice');
+      var specEl = card.querySelector('.ispec');
+      return {
+        name: nameEl ? nameEl.textContent.trim() : '',
+        price: priceEl ? priceEl.textContent.trim() : '',
+        spec: specEl ? specEl.textContent.trim() : '',
+        suggested: card.classList.contains('is-suggested')
+      };
+    });
+  }
+  var STAPLE_POOL = buildStaplePool();
+
+  // veg pool is rebuilt live (not cached) since combo cards are user-editable at any time
+  function getVegPool(){
+    var grid = document.getElementById('comboGrid');
+    if(!grid) return [];
+    return Array.prototype.map.call(grid.querySelectorAll('.combo-card'), function(card){
+      var titleEl = card.querySelector('.ctitle');
+      var priceEl = card.querySelector('.cprice');
+      var itemsEl = card.querySelector('.citems');
+      return {
+        name: titleEl ? titleEl.textContent.trim() : '',
+        price: priceEl ? priceEl.textContent.trim() : '',
+        spec: itemsEl ? itemsEl.textContent.trim() : ''
+      };
+    });
+  }
+
+  function buildDayMap(){
+    // flat list of {tier, tierIdx} in tier order, plus each tier's starting offset
+    // into that flat list — used to turn a (tier, tierIdx) protein slot into the
+    // overall "cook day" index that veg/staple picks are stored under.
+    var list = [];
+    var offsets = {};
+    var cursor = 0;
+    MENU_TIERS.forEach(function(t){
+      offsets[t] = cursor;
+      for(var i=0;i<state[t];i++){ list.push({tier:t, tierIdx:i}); cursor++; }
+    });
+    return {list:list, offsets:offsets};
+  }
+
+  function ensureMenuState(){
+    if(!state.menu) state.menu = {};
+    if(!state.menu.protein) state.menu.protein = {};
+    MENU_TIERS.forEach(function(t){
+      if(!state.menu.protein[t]) state.menu.protein[t] = [];
+      var arr = state.menu.protein[t];
+      var n = state[t];
+      while(arr.length < n) arr.push(null);
+      if(arr.length > n) arr.length = n;
+    });
+    if(!state.menu.veg) state.menu.veg = [];
+    if(!state.menu.staple) state.menu.staple = [];
+    var cookDays = MENU_TIERS.reduce(function(a,t){ return a+state[t]; }, 0);
+    [state.menu.veg, state.menu.staple].forEach(function(arr){
+      while(arr.length < cookDays) arr.push(null);
+      if(arr.length > cookDays) arr.length = cookDays;
+    });
+  }
+
+  function menuChipRow(title, order, counts){
+    if(!order.length) return '';
+    var html = '<div class="menu-summary-group"><div class="msg-title">'+title+'</div><div class="menu-summary-list">';
+    order.forEach(function(name){
+      html += '<span class="menu-summary-chip"><b>'+escapeHtml(name)+'</b><span class="ms-x">× '+counts[name]+'</span></span>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderMenuSummary(){
+    var box = el('menuSummary');
+    if(!box) return;
+    var proteinCounts = {}, proteinOrder = [];
+    MENU_TIERS.forEach(function(t){
+      var pool = PROTEIN_POOLS[t] || [];
+      (state.menu.protein[t]||[]).forEach(function(picked){
+        if(picked===null || picked===undefined || !pool[picked]) return;
+        var name = pool[picked].name;
+        if(!proteinCounts[name]){ proteinCounts[name] = 0; proteinOrder.push(name); }
+        proteinCounts[name]++;
+      });
+    });
+    var vegPool = getVegPool();
+    var vegCounts = {}, vegOrder = [];
+    (state.menu.veg||[]).forEach(function(picked){
+      if(picked===null || picked===undefined || !vegPool[picked]) return;
+      var name = vegPool[picked].name;
+      if(!vegCounts[name]){ vegCounts[name] = 0; vegOrder.push(name); }
+      vegCounts[name]++;
+    });
+    var stapleCounts = {}, stapleOrder = [];
+    (state.menu.staple||[]).forEach(function(picked){
+      if(picked===null || picked===undefined || !STAPLE_POOL[picked]) return;
+      var name = STAPLE_POOL[picked].name;
+      if(!stapleCounts[name]){ stapleCounts[name] = 0; stapleOrder.push(name); }
+      stapleCounts[name]++;
+    });
+    var body = menuChipRow('蛋白質', proteinOrder, proteinCounts) +
+      menuChipRow('蔬菜', vegOrder, vegCounts) +
+      menuChipRow('主食', stapleOrder, stapleCounts);
+    if(!body){
+      box.hidden = true;
+      box.innerHTML = '';
+      return;
+    }
+    box.hidden = false;
+    box.innerHTML = '<h3>已選菜色一覽</h3>' + body;
+  }
+
+  function renderPickRow(kind, dayIdx, label, pool, pickedIdx, tier, tierIdx){
+    var item = (pickedIdx!==null && pickedIdx!==undefined) ? pool[pickedIdx] : null;
+    var dataAttrs = 'data-kind="'+kind+'" data-day="'+dayIdx+'"';
+    if(kind==='protein'){ dataAttrs += ' data-tier="'+tier+'" data-tieridx="'+tierIdx+'"'; }
+    var html = '<div class="mday-row'+(item?' is-filled':'')+'">';
+    html += '<div class="mrow-label">'+label+'</div>';
+    if(!pool.length){
+      if(kind==='veg'){
+        html += '<div class="mrow-empty">還沒建立蔬菜搭配組合</div>';
+        html += '<button type="button" class="mrow-goto" data-view="veg">去蔬菜頁建立組合</button>';
+      } else {
+        html += '<div class="mrow-empty">目前沒有可選項目</div>';
+      }
+      return html + '</div>';
+    }
+    html += '<select class="ms-select" '+dataAttrs+'>';
+    html += '<option value="">— 選擇 —</option>';
+    pool.forEach(function(p, pi){
+      var lbl = p.name + (p.suggested ? '（未核實）' : '');
+      html += '<option value="'+pi+'"'+(pickedIdx===pi?' selected':'')+'>'+escapeHtml(lbl)+'</option>';
+    });
+    html += '</select>';
+    if(item){
+      html += '<div class="ms-info">'+escapeHtml(item.spec||'')+(item.spec&&item.price?' · ':'')+'<b>'+escapeHtml(item.price||'')+'</b></div>';
+    } else {
+      html += '<div class="ms-info"></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderMenuTotalBar(totalSlots, filledSlots, grandTotal, catTotals){
+    var bar = el('menuTotalBar');
+    if(!bar) return;
+    if(!totalSlots){
+      bar.hidden = true;
+      return;
+    }
+    bar.hidden = false;
+    el('mtbFilled').textContent = filledSlots+' / '+totalSlots;
+    el('mtbTotal').textContent = '約 $'+fmt(grandTotal);
+    el('mtbPerPortion').textContent = filledSlots>0 ? ('約 $'+fmt(grandTotal/filledSlots)) : '—';
+    el('mtbProtein').textContent = '約 $'+fmt(catTotals.protein);
+    el('mtbVeg').textContent = '約 $'+fmt(catTotals.veg);
+    el('mtbStaple').textContent = '約 $'+fmt(catTotals.staple);
+  }
+
+  function renderMenu(){
+    try{
+      ensureMenuState();
+      saveAutosave(snapshotState(state));
+      var body = el('menuBody');
+      if(!body) return;
+      var dm = buildDayMap();
+      var activeTiers = MENU_TIERS.filter(function(t){ return state[t] > 0; });
+      var html = '';
+      if(state.bento > 0){
+        html += '<div class="menu-bento-note">便當日 '+state.bento+' 天．外食或超商便當，不用選菜色</div>';
+      }
+      if(!activeTiers.length){
+        html += '<div class="menu-empty">先回到「試算」排幾天分級，這裡就會出現可以選菜的欄位。</div>';
+        body.innerHTML = html;
+        if(el('menuActionsRow')) el('menuActionsRow').hidden = true;
+        renderMenuTotalBar(0, 0, 0, {protein:0, veg:0, staple:0});
+        renderMenuSummary();
+        return;
+      }
+      if(el('menuActionsRow')) el('menuActionsRow').hidden = false;
+      var vegPool = getVegPool();
+      var grandTotal = 0, filledSlots = 0, totalSlots = 0;
+      var catTotals = {protein:0, veg:0, staple:0};
+      activeTiers.forEach(function(t){
+        var proteinPool = PROTEIN_POOLS[t] || [];
+        html += '<div class="menu-tier-group" data-tier="'+t+'">';
+        html += '<div class="menu-tier-head"><span class="srow-swatch" style="background:var(--tier-'+t.toLowerCase()+');"></span><span class="mt-name">'+TIER_NAME[t]+'</span><span class="mt-count">'+state[t]+' 份</span></div>';
+        html += '<div class="menu-day-grid">';
+        for(var ti=0; ti<state[t]; ti++){
+          totalSlots++;
+          var dayIdx = dm.offsets[t] + ti;
+          var pPicked = state.menu.protein[t][ti];
+          var vPicked = state.menu.veg[dayIdx];
+          var sPicked = state.menu.staple[dayIdx];
+          var pItem = (pPicked!==null && pPicked!==undefined) ? proteinPool[pPicked] : null;
+          var vItem = (vPicked!==null && vPicked!==undefined) ? vegPool[vPicked] : null;
+          var sItem = (sPicked!==null && sPicked!==undefined) ? STAPLE_POOL[sPicked] : null;
+          var pPrice = parsePriceNum(pItem&&pItem.price);
+          var vPrice = parsePriceNum(vItem&&vItem.price);
+          var sPrice = parsePriceNum(sItem&&sItem.price);
+          var dayTotal = pPrice + vPrice + sPrice;
+          if(dayTotal > 0){ grandTotal += dayTotal; filledSlots++; }
+          catTotals.protein += pPrice;
+          catTotals.veg += vPrice;
+          catTotals.staple += sPrice;
+          html += '<div class="menu-day-card">';
+          html += '<div class="mday-head"><span class="mday-num">第 '+(ti+1)+' 份</span>';
+          if(dayTotal > 0){
+            html += '<span class="mday-total">小計 約 $'+fmt(dayTotal)+'　·　一人份 約 $'+fmt(dayTotal/4)+'</span>';
+          }
+          html += '</div>';
+          html += renderPickRow('protein', dayIdx, '蛋白質', proteinPool, pPicked, t, ti);
+          html += renderPickRow('veg', dayIdx, '蔬菜', vegPool, vPicked);
+          html += renderPickRow('staple', dayIdx, '主食', STAPLE_POOL, sPicked);
+          html += '</div>';
+        }
+        html += '</div></div>';
+      });
+      body.innerHTML = html;
+      renderMenuTotalBar(totalSlots, filledSlots, grandTotal, catTotals);
+      renderMenuSummary();
+    }catch(e){}
+  }
+  window.renderMenu = renderMenu;
+
+  function randomIndex(len){
+    return len>0 ? Math.floor(Math.random()*len) : null;
+  }
+
+  // fills every currently visible day slot (across all active tiers) with a random
+  // protein / veg / staple pick, overwriting whatever was already chosen there.
+  function randomizeMenu(){
+    ensureMenuState();
+    var dm = buildDayMap();
+    var vegPool = getVegPool();
+    var vegLen = vegPool.length;
+    var stapleLen = STAPLE_POOL.length;
+    dm.list.forEach(function(slot, dayIdx){
+      var proteinPool = PROTEIN_POOLS[slot.tier] || [];
+      if(proteinPool.length){
+        state.menu.protein[slot.tier][slot.tierIdx] = randomIndex(proteinPool.length);
+      }
+      if(vegLen) state.menu.veg[dayIdx] = randomIndex(vegLen);
+      if(stapleLen) state.menu.staple[dayIdx] = randomIndex(stapleLen);
+    });
+    renderMenu();
+  }
+
+  var menuRandomBtn = el('menuRandomBtn');
+  if(menuRandomBtn){
+    menuRandomBtn.addEventListener('click', randomizeMenu);
+  }
+
+  // clears every day slot's protein/veg/staple pick back to "— 選擇 —", without
+  // touching the tier day-counts from 試算 (state.XS/S/M/L/XL/bento are untouched).
+  function clearMenu(){
+    ensureMenuState();
+    MENU_TIERS.forEach(function(t){
+      state.menu.protein[t] = state.menu.protein[t].map(function(){ return null; });
+    });
+    state.menu.veg = state.menu.veg.map(function(){ return null; });
+    state.menu.staple = state.menu.staple.map(function(){ return null; });
+    renderMenu();
+  }
+
+  var menuClearBtn = el('menuClearBtn');
+  if(menuClearBtn){
+    menuClearBtn.addEventListener('click', clearMenu);
+  }
+
+  function syncToggleUI(){
+    ['veg','staple','bento'].forEach(function(key){
+      var mode = state[key+'Mode'];
+      var sw = document.querySelector('.mode-switch[data-key="'+key+'"]');
+      if(sw){ sw.setAttribute('aria-checked', mode==='custom' ? 'true' : 'false'); }
+      var input = el('custom-'+key);
+      if(input){
+        input.hidden = mode!=='custom';
+        input.value = state[key+'Custom'];
+      }
+    });
+  }
+
+  function diffText(current, ref){
+    var d = current-ref;
+    if(Math.abs(d) < 1) return '打平';
+    return d>0 ? ('多 '+fmt(Math.abs(d))+' 元') : ('少 '+fmt(Math.abs(d))+' 元');
+  }
+
+  function el(id){ return document.getElementById(id); }
+
+  // recomputed on every render() (not just once at load) because the three
+  // reference bars need to reflect whatever totalDays is currently selected —
+  // "排法一" etc. are ratios, scaled onto the current planning period via
+  // distributeDays(), not fixed 14-day absolutes.
+  function initRef(){
+    var labels = {one:'排法一', two:'排法二', three:'排法三'};
+    ['one','two','three'].forEach(function(k){
+      var scaled = distributeDays(PRESETS[k], state.totalDays);
+      REF[k] = compute(Object.assign({}, scaled, {vegMode:'avg', stapleMode:'avg'})).total;
+      var bar = el('refbar-'+k);
+      if(bar) bar.title = labels[k]+'：'+fmt(REF[k])+' 元';
+      var valEl = el('refbar-'+k+'-val');
+      if(valEl) valEl.textContent = '$'+fmt(REF[k]);
+      var composeEl = el('refbar-'+k+'-compose');
+      if(composeEl){
+        var parts = ['便當 '+scaled.bento+' 天'];
+        ['XS','S','M','L','XL'].forEach(function(tk){
+          if(scaled[tk]>0) parts.push(TIER_NAME[tk]+' '+scaled[tk]+' 天');
+        });
+        composeEl.textContent = parts.join('・');
+      }
+    });
+  }
+
+  // keeps the "規劃天數" pill row + custom-days input in sync with state.totalDays —
+  // called from render() so it stays correct no matter what changed it (a pill
+  // click, typing in the custom box, loading a saved plan, or the initial
+  // autosave restore).
+  function syncDaysUI(){
+    var td = state.totalDays;
+    var presetVals = [1,3,5,7,14,30];
+    var matchesPreset = presetVals.indexOf(td) !== -1;
+    document.querySelectorAll('.days-btn').forEach(function(btn){
+      var dv = btn.getAttribute('data-days');
+      btn.classList.toggle('is-active', dv==='custom' ? !matchesPreset : (Number(dv)===td));
+    });
+    var input = el('daysCustomInput');
+    if(input){
+      var isFocused = document.activeElement===input;
+      input.hidden = matchesPreset && !isFocused;
+      if(!isFocused) input.value = td;
+    }
+  }
+
+  // updates every place in the page that spells out the planning-period length
+  // in words ("14 天試算", "56 份", "/ 14", …) — kept as one function so no
+  // wording spot can drift out of sync with state.totalDays.
+  function updateDaysWording(){
+    var td = state.totalDays;
+    var setText = function(id, text){ var n = el(id); if(n) n.textContent = text; };
+    setText('compareSectionTag', td+' 天試算');
+    setText('planDaysLabel1', td);
+    setText('planDaysLabel2', td);
+    setText('remainingTotal', td);
+    setText('chartDaysLabel', td);
+    setText('chartPortionsLabel', td*4);
+    setText('menuSectionTag', td+' 天排菜');
+    setText('menuDaysLabel', td);
+  }
+
+  // rescales the current tier/bento day counts onto a newly picked total — see
+  // distributeDays() — so switching the planning period keeps the same relative
+  // mix instead of leaving the old counts sitting there (now either overflowing
+  // a shorter period, or leaving a longer one mostly unallocated).
+  function setTotalDays(newTotal){
+    newTotal = Math.max(MIN_TOTAL_DAYS, Math.min(MAX_TOTAL_DAYS, Math.round(newTotal)||MIN_TOTAL_DAYS));
+    if(newTotal===state.totalDays) return;
+    var currentCounts = {};
+    KEYS.forEach(function(k){ currentCounts[k] = state[k]; });
+    var rescaled = distributeDays(currentCounts, newTotal);
+    state.totalDays = newTotal;
+    KEYS.forEach(function(k){ state[k] = rescaled[k]; });
+    render();
+  }
+
+  function render(){
+    try{
+      initRef();
+      syncDaysUI();
+      updateDaysWording();
+
+      var used = sumDays(state);
+      var remaining = state.totalDays - used;
+
+      KEYS.forEach(function(k){
+        var countEl = el('count-'+k);
+        if(countEl) countEl.textContent = state[k];
+      });
+
+      document.querySelectorAll('.stepper-btn').forEach(function(btn){
+        var key = btn.getAttribute('data-key');
+        var action = btn.getAttribute('data-action');
+        if(action==='inc'){ btn.disabled = remaining<=0; }
+        else { btn.disabled = state[key]<=0; }
+      });
+
+      var banner = el('remainingBanner');
+      var isAllocated = remaining===0;
+      banner.classList.toggle('is-zero', isAllocated);
+      banner.classList.toggle('is-warn', !isAllocated);
+      el('remainingCount').textContent = remaining;
+      var rbIcon = el('remainingIcon'); if(rbIcon) rbIcon.textContent = isAllocated ? '\u2713' : '\u26A0';
+
+      var r = compute(state);
+      el('resultTotal').textContent = '$'+fmt(r.total);
+      el('resultPortion').textContent = '$'+fmt(r.total/(state.totalDays*4));
+      el('resultWeek').textContent = fmt(r.total/state.totalDays)+' 元';
+      el('resultProtein').textContent = fmt(r.protein)+' 元';
+      el('resultVeg').textContent = fmt(r.veg)+' 元';
+      el('resultStaple').textContent = fmt(r.staple)+' 元';
+      el('resultBento').textContent = fmt(r.bentoCost)+' 元';
+      el('resultCookDays').textContent = r.cookDays+' 天';
+
+      var maxVal = Math.max(REF.one, REF.two, REF.three, r.total, 1);
+      el('refbar-one').style.width   = (REF.one/maxVal*100)+'%';
+      el('refbar-two').style.width   = (REF.two/maxVal*100)+'%';
+      el('refbar-three').style.width = (REF.three/maxVal*100)+'%';
+      el('refbar-live').style.width  = (r.total/maxVal*100)+'%';
+      el('refbar-live-val').textContent = '$'+fmt(r.total);
+      el('refbar-live').title = '目前選擇：'+fmt(r.total)+' 元';
+      el('axisMax').textContent = '最高 $'+fmt(maxVal);
+
+      el('deltaNote').innerHTML = '目前選擇比排法一' + diffText(r.total, REF.one) +
+        '，比排法三' + diffText(r.total, REF.three) + '。';
+
+      renderMenu();
+    }catch(e){ /* keep page usable even if a node is missing */ }
+  }
+
+  document.querySelectorAll('.stepper-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.getAttribute('data-key');
+      var action = btn.getAttribute('data-action');
+      var remaining = state.totalDays - sumDays(state);
+      if(action==='inc'){ if(remaining>0) state[key] = state[key]+1; }
+      else { if(state[key]>0) state[key] = state[key]-1; }
+      render();
+    });
+  });
+
+  document.querySelectorAll('.days-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var dv = btn.getAttribute('data-days');
+      var input = el('daysCustomInput');
+      if(dv==='custom'){
+        if(input){ input.hidden = false; input.focus(); input.select(); }
+        return;
+      }
+      setTotalDays(Number(dv));
+    });
+  });
+
+  var daysCustomInputEl = el('daysCustomInput');
+  if(daysCustomInputEl){
+    daysCustomInputEl.addEventListener('input', function(){
+      var v = parseInt(daysCustomInputEl.value, 10);
+      if(!isFinite(v) || v<MIN_TOTAL_DAYS) return; // ignore while the field is empty / mid-edit
+      setTotalDays(v);
+    });
+  }
+
+  document.querySelectorAll('.mode-switch').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.getAttribute('data-key');
+      var mode = state[key+'Mode']==='custom' ? 'avg' : 'custom';
+      state[key+'Mode'] = mode;
+      syncToggleUI();
+      render();
+      if(mode==='custom'){
+        var inp = el('custom-'+key);
+        if(inp){ inp.focus(); inp.select(); }
+      }
+    });
+  });
+
+  document.querySelectorAll('.custom-input').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var key = inp.id.replace('custom-','');
+      state[key+'Custom'] = inp.value;
+      render();
+    });
+  });
+
+  document.querySelectorAll('.preset-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var p = btn.getAttribute('data-preset');
+      // guard: .preset-btn styling is reused by buttons that aren't tier-count presets
+      // (e.g. the "排菜" section's random button) — only run this for real presets.
+      if(!p || !PRESETS[p]) return;
+      var prevMenu = state.menu;
+      // presets are ratios (their own counts always sum to 14), scaled onto
+      // whatever planning period is currently selected — so "套用排法一" still
+      // makes sense at 7 days or 30 days, not just the original 14.
+      var scaled = distributeDays(PRESETS[p], state.totalDays);
+      state = Object.assign({}, scaled, {
+        totalDays: state.totalDays,
+        vegMode:'avg', vegCustom:140, stapleMode:'avg', stapleCustom:90,
+        bentoMode:'avg', bentoCustom:800,
+        menu: prevMenu || {protein:{XS:[], S:[], M:[], L:[], XL:[]}, veg:[], staple:[]}
+      });
+      syncToggleUI();
+      render();
+    });
+  });
+
+  // exposed so other sections (蔬菜搭配卡 / 主食品項卡) can push a price straight into the calculator
+  window.applyToCalc = function(kind, price){
+    price = Number(price) || 0;
+    if(kind==='veg'){ state.vegMode = 'custom'; state.vegCustom = price; }
+    else if(kind==='staple'){ state.stapleMode = 'custom'; state.stapleCustom = price; }
+    else { return; }
+    syncToggleUI();
+    render();
+    if(window.showView) window.showView('compare');
+    window.scrollTo(0,0);
+  };
+
+  document.querySelectorAll('#staple .iapply').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      window.applyToCalc('staple', btn.getAttribute('data-price'));
+    });
+  });
+
+  var menuBodyEl = el('menuBody');
+  if(menuBodyEl){
+    menuBodyEl.addEventListener('change', function(e){
+      var sel = e.target.closest ? e.target.closest('.ms-select') : null;
+      if(!sel) return;
+      var kind = sel.getAttribute('data-kind');
+      var val = sel.value;
+      var parsedVal = val==='' ? null : parseInt(val, 10);
+      if(kind==='protein'){
+        var t = sel.getAttribute('data-tier');
+        var ti = parseInt(sel.getAttribute('data-tieridx'), 10);
+        if(!state.menu.protein[t]) state.menu.protein[t] = [];
+        state.menu.protein[t][ti] = parsedVal;
+      } else {
+        var day = parseInt(sel.getAttribute('data-day'), 10);
+        if(!state.menu[kind]) state.menu[kind] = [];
+        state.menu[kind][day] = parsedVal;
+      }
+      renderMenu();
+    });
+    menuBodyEl.addEventListener('click', function(e){
+      var gotoBtn = e.target.closest ? e.target.closest('.mrow-goto') : null;
+      if(!gotoBtn) return;
+      var view = gotoBtn.getAttribute('data-view');
+      if(window.showView) window.showView(view);
+    });
+  }
+
+  // ---- saved meal plans UI (排菜 section: 我的計畫) ----
+  function formatSavedAt(ts){
+    try{
+      var d = new Date(ts);
+      var pad = function(n){ return n<10 ? '0'+n : ''+n; };
+      return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    }catch(e){ return ''; }
+  }
+
+  function describePlanState(s){
+    var parts = [(s.totalDays||DEFAULT_TOTAL_DAYS)+' 天計畫', '便當 '+s.bento+' 天'];
+    ['XS','S','M','L','XL'].forEach(function(tk){
+      if(s[tk]>0) parts.push(TIER_NAME[tk]+' '+s[tk]+' 天');
+    });
+    return parts.join('・');
+  }
+
+  function showPlanMsg(text, isError){
+    var msg = el('planMsg');
+    if(!msg) return;
+    msg.textContent = text;
+    msg.hidden = false;
+    msg.classList.toggle('is-error', !!isError);
+  }
+
+  // resolves a Claude Artifact runtime capability, or null when this page isn't
+  // running inside that runtime (e.g. opened as a plain local file) — every caller
+  // must handle null rather than assume the capability exists.
+  function claudeCapability(name){
+    try{
+      if(typeof window.claude === 'undefined' || typeof window.claude.use !== 'function') return Promise.resolve(null);
+      return window.claude.use(name);
+    }catch(e){ return Promise.resolve(null); }
+  }
+
+  // ---- Bring-your-own-key OpenAI fallback for the AI features ----
+  // When this page isn't running with the claude.ai platform's `sample` capability
+  // available (e.g. opened outside the artifact's owning organization, or hosted as
+  // a plain static page elsewhere), each viewer can paste their own OpenAI API key
+  // instead. The key is stored only in that browser's own localStorage and is only
+  // ever sent straight to AI_PROXY_URL (see below) with each request — never to any
+  // other server, and never persisted anywhere shared between viewers.
+  //
+  // OpenAI's API does not send CORS headers, so a plain static page cannot call
+  // api.openai.com directly from the browser even with a valid key — every request
+  // has to go through a thin relay that adds the missing CORS headers. AI_PROXY_URL
+  // should point at that relay (see the accompanying Cloudflare Worker snippet).
+  // The relay is a dumb pass-through: it never sees, stores, or bills anything — it
+  // just forwards whatever Authorization header and body the caller already sent
+  // straight to OpenAI and relays the response back with CORS headers attached.
+  var AI_PROXY_URL = 'https://meal-ai-proxy.mika-wu.workers.dev';
+  var OPENAI_KEY_STORAGE = 'mealPlanOpenAiKey_v1';
+  var OPENAI_MODEL = 'gpt-6-luna';
+
+  function getOpenAiKey(){
+    try{ return (localStorage.getItem(OPENAI_KEY_STORAGE) || '').trim(); }catch(e){ return ''; }
+  }
+  function setOpenAiKey(key){
+    try{
+      if(key) localStorage.setItem(OPENAI_KEY_STORAGE, key);
+      else localStorage.removeItem(OPENAI_KEY_STORAGE);
+      return true;
+    }catch(e){ return false; }
+  }
+
+  // Wraps a direct OpenAI chat-completion call behind the same {json(prompt,opts)}
+  // shape the platform's `sample` capability exposes, so every existing call site
+  // written for claudeCapability('sample') keeps working unchanged against getAiSample().
+  function openAiSample(apiKey){
+    return {
+      json: function(prompt){
+        return fetch(AI_PROXY_URL, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+apiKey},
+          body: JSON.stringify({
+            model: OPENAI_MODEL,
+            messages: [{role:'user', content: prompt}],
+            response_format: {type:'json_object'}
+          })
+        }).catch(function(networkErr){
+          // TEMPORARY DEBUG (see the matching comment further down): the fetch()
+          // call itself rejected — no HTTP response ever came back at all, so
+          // this is a browser/network-level failure in front of AI_PROXY_URL
+          // (blocked by CORS, blocked by this page's own sandboxed iframe CSP,
+          // DNS/connection failure, offline, etc.), not an OpenAI-side error.
+          // The browser deliberately hides the exact reason from JS for
+          // cross-origin requests (that's standard fetch() behavior, not
+          // something this page can bypass) — networkErr.message is usually
+          // just "Failed to fetch" — so pinpointing CORS vs. CSP vs. DNS needs
+          // a look at the browser's own DevTools Console/Network tab.
+          var err = new Error('network request to AI proxy failed');
+          err.code = 'proxy_unreachable';
+          err.detail = (networkErr && networkErr.message) || String(networkErr);
+          throw err;
+        }).then(function(res){
+          if(!res.ok){
+            return res.json().catch(function(){ return null; }).then(function(errBody){
+              var err = new Error('openai request failed');
+              if(res.status===401) err.code = 'openai_unauthorized';
+              else if(res.status===429) err.code = 'rate_limited';
+              else err.code = 'openai_error';
+              // TEMPORARY DEBUG (requested by mika to diagnose a BYOK setup issue —
+              // remove once resolved): status + OpenAI's own error message/type, so
+              // the viewer can tell auth vs. permission vs. billing vs. bad model
+              // apart from the UI. Never includes the API key itself — the key is
+              // only ever sent as a request header, never present anywhere in
+              // OpenAI's (or the proxy's) response body/status.
+              err.status = res.status;
+              err.detail = errBody && errBody.error && errBody.error.message;
+              err.openaiErrorType = errBody && errBody.error && errBody.error.type;
+              err.openaiErrorCode = errBody && errBody.error && errBody.error.code;
+              throw err;
+            });
+          }
+          return res.json();
+        }).then(function(payload){
+          var content = payload && payload.choices && payload.choices[0] && payload.choices[0].message && payload.choices[0].message.content;
+          if(!content){ var e1=new Error('empty'); e1.code='empty_completion'; throw e1; }
+          try{ return JSON.parse(content); }
+          catch(e){ var e2=new Error('bad json'); e2.code='invalid_json'; throw e2; }
+        });
+      }
+    };
+  }
+
+  // Unified AI resolver every call site should use instead of calling
+  // claudeCapability('sample') directly: tries the claude.ai platform capability
+  // first (automatic, no setup, for org members), then falls back to the viewer's
+  // own saved OpenAI key, then resolves null if neither is available.
+  function getAiSample(){
+    return claudeCapability('sample').then(function(sample){
+      if(sample) return sample;
+      var key = getOpenAiKey();
+      if(key) return openAiSample(key);
+      return null;
+    });
+  }
+
+  // keeps the AI-dependent panels' visibility in sync with whatever AI backend is
+  // currently available — called on load and again whenever the viewer saves or
+  // clears their own OpenAI key, since that can change availability mid-session
+  // without a reload.
+  function refreshAiAvailability(){
+    getAiSample().then(function(sample){
+      var available = !!sample;
+      var recipePanel = el('aiRecipePanel');
+      if(recipePanel) recipePanel.hidden = !available;
+      var toggleRow = el('posterAiTipRow');
+      if(toggleRow) toggleRow.hidden = !available;
+    });
+  }
+
+  function updateAiSettingsStatus(){
+    var statusEl = el('aiSettingsStatus');
+    if(!statusEl) return;
+    claudeCapability('sample').then(function(sample){
+      if(sample){
+        statusEl.textContent = '目前使用平台內建 AI（免設定）';
+        statusEl.classList.remove('is-warn');
+      } else if(getOpenAiKey()){
+        statusEl.textContent = '目前使用你儲存的 OpenAI 金鑰';
+        statusEl.classList.remove('is-warn');
+      } else {
+        statusEl.textContent = '尚未設定，AI 功能暫時關閉';
+        statusEl.classList.add('is-warn');
+      }
+    });
+  }
+
+  function showAiSettingsMsg(text, isError){
+    var msgEl = el('aiSettingsMsg');
+    if(!msgEl) return;
+    msgEl.textContent = text || '';
+    msgEl.hidden = !text;
+    msgEl.classList.toggle('is-error', !!isError);
+  }
+
+  (function initAiSettings(){
+    var input = el('openAiKeyInput');
+    var saveBtn = el('openAiKeySaveBtn');
+    var clearBtn = el('openAiKeyClearBtn');
+    if(input && getOpenAiKey()) input.placeholder = '已儲存金鑰（重新貼上可覆蓋）';
+    if(saveBtn){
+      saveBtn.addEventListener('click', function(){
+        var val = input ? input.value.trim() : '';
+        if(!val){ showAiSettingsMsg('請先貼上金鑰再儲存。', true); return; }
+        if(setOpenAiKey(val)){
+          if(input){ input.value=''; input.placeholder = '已儲存金鑰（重新貼上可覆蓋）'; }
+          showAiSettingsMsg('已儲存，AI 功能已開啟。');
+          updateAiSettingsStatus();
+          refreshAiAvailability();
+        } else {
+          showAiSettingsMsg('這個瀏覽器無法儲存金鑰，請確認沒有開無痕模式或封鎖網站資料。', true);
+        }
+      });
+    }
+    if(clearBtn){
+      clearBtn.addEventListener('click', function(){
+        setOpenAiKey('');
+        if(input){ input.value=''; input.placeholder = '貼上你的 OpenAI API 金鑰（sk-...）'; }
+        showAiSettingsMsg('已清除本機儲存的金鑰。');
+        updateAiSettingsStatus();
+        refreshAiAvailability();
+      });
+    }
+    updateAiSettingsStatus();
+    refreshAiAvailability();
+  })();
+
+  // plain-browser fallback for saving a file, used whenever the platform's own
+  // `downloads` capability isn't available — not logged into claude.ai, viewing
+  // from a network that's blocking the capability bridge, or any other reason
+  // window.claude never showed up. Needs no login and no platform bridge: it's
+  // just the standard <a download> + blob URL trick every modern browser
+  // supports natively. `data` can be a Blob or a string (JSON/text exports).
+  function browserDownloadBlob(data, filename, mime){
+    try{
+      var blob = (data instanceof Blob) ? data : new Blob([data], {type: mime || 'application/octet-stream'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function exportSnapshot(snap, suggestedName){
+    var label = (suggestedName || '備餐計畫').trim() || '備餐計畫';
+    var safeName = label.replace(/[\\/:*?"<>|]/g,'').trim() || '備餐計畫';
+    var filename = safeName + '.json';
+    var payload = JSON.stringify({name:label, savedAt:Date.now(), state:snap}, null, 2);
+    claudeCapability('downloads').then(function(downloads){
+      if(downloads){
+        return downloads.save({filename:filename, data:payload}).then(function(){
+          showPlanMsg('已匯出「'+filename+'」。');
+        });
+      }
+      // no platform downloads capability — fall back to a plain browser download,
+      // which works whether or not you're logged into claude.ai.
+      if(browserDownloadBlob(payload, filename, 'application/json')){
+        showPlanMsg('已匯出「'+filename+'」（用瀏覽器下載）。');
+      } else {
+        showPlanMsg('這個瀏覽器無法自動下載檔案，請換個瀏覽器再試一次。', true);
+      }
+    }).catch(function(e){
+      if(e && e.code==='declined') return;
+      if(browserDownloadBlob(payload, filename, 'application/json')){
+        showPlanMsg('已匯出「'+filename+'」（用瀏覽器下載）。');
+      } else {
+        showPlanMsg('匯出失敗，請稍後再試。', true);
+      }
+    });
+  }
+
+  function renderPlanList(){
+    var list = el('planList');
+    if(!list) return;
+    var plans = loadSavedPlans();
+    if(!plans.length){
+      list.innerHTML = '<div class="plan-empty">還沒有另存任何計畫。</div>';
+      return;
+    }
+    list.innerHTML = '';
+    plans.slice().reverse().forEach(function(plan){
+      var normalized = normalizeSnapshot(plan.state);
+      var row = document.createElement('div');
+      row.className = 'plan-row';
+      row.setAttribute('data-plan-id', plan.id);
+      row.innerHTML =
+        '<div class="plan-row-main">'+
+          '<div class="plan-row-name"></div>'+
+          '<div class="plan-row-meta"></div>'+
+        '</div>'+
+        '<div class="plan-row-actions">'+
+          '<button type="button" class="plan-row-btn" data-action="load">載入</button>'+
+          '<button type="button" class="plan-row-btn" data-action="export">匯出</button>'+
+          '<button type="button" class="plan-row-btn is-danger" data-action="delete">刪除</button>'+
+        '</div>';
+      row.querySelector('.plan-row-name').textContent = plan.name;
+      row.querySelector('.plan-row-meta').textContent = formatSavedAt(plan.savedAt) + '　·　' + describePlanState(normalized);
+      row.querySelector('[data-action="load"]').addEventListener('click', function(){
+        state = normalizeSnapshot(plan.state);
+        syncToggleUI();
+        render();
+        showPlanMsg('已載入「'+plan.name+'」。');
+      });
+      row.querySelector('[data-action="export"]').addEventListener('click', function(){
+        exportSnapshot(normalized, plan.name);
+      });
+      row.querySelector('[data-action="delete"]').addEventListener('click', function(){
+        var arr = loadSavedPlans().filter(function(p){ return p.id!==plan.id; });
+        saveSavedPlans(arr);
+        renderPlanList();
+        showPlanMsg('已刪除「'+plan.name+'」。');
+      });
+      list.appendChild(row);
+    });
+  }
+
+  var planNameInput = el('planNameInput');
+  var planSaveBtn = el('planSaveBtn');
+  var planExportBtn = el('planExportBtn');
+  var planImportBtn = el('planImportBtn');
+  var planImportInput = el('planImportInput');
+
+  if(planNameInput){
+    planNameInput.addEventListener('input', function(){ planNameInput.classList.remove('is-invalid'); });
+  }
+  if(planSaveBtn){
+    planSaveBtn.addEventListener('click', function(){
+      var name = planNameInput ? planNameInput.value.trim() : '';
+      if(!name){
+        if(planNameInput){ planNameInput.classList.add('is-invalid'); planNameInput.focus(); }
+        return;
+      }
+      var arr = loadSavedPlans();
+      arr.push({id:'plan'+Date.now(), name:name, savedAt:Date.now(), state:snapshotState(state)});
+      saveSavedPlans(arr);
+      planNameInput.value = '';
+      renderPlanList();
+      showPlanMsg('已另存「'+name+'」。');
+    });
+  }
+  if(planExportBtn){
+    planExportBtn.addEventListener('click', function(){
+      var name = (planNameInput && planNameInput.value.trim()) || '目前計畫';
+      exportSnapshot(snapshotState(state), name);
+    });
+  }
+  if(planImportBtn && planImportInput){
+    planImportBtn.addEventListener('click', function(){ planImportInput.click(); });
+    planImportInput.addEventListener('change', function(){
+      var file = planImportInput.files && planImportInput.files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        try{
+          var raw = JSON.parse(String(reader.result));
+          var snap = (raw && raw.state && typeof raw.state==='object') ? raw.state : raw;
+          state = normalizeSnapshot(snap);
+          syncToggleUI();
+          render();
+          showPlanMsg('已匯入計畫'+(raw && raw.name ? '「'+raw.name+'」' : '')+'。');
+        }catch(e){
+          showPlanMsg('這個檔案看起來不是有效的計畫檔案，匯入失敗。', true);
+        }
+        planImportInput.value = '';
+      };
+      reader.onerror = function(){
+        showPlanMsg('讀取檔案失敗，請再試一次。', true);
+        planImportInput.value = '';
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  // ---- export a pretty menu image (排菜 section: 輸出菜單圖片) ----
+  // Re-walks the same tier/day structure renderMenu() builds as HTML, but as plain
+  // data — kept as a separate pass rather than refactoring renderMenu() itself, to
+  // avoid touching its already-working DOM-building logic. If the per-day price math
+  // in renderMenu() ever changes, this needs the same change made here too.
+  var TIER_COLOR_HEX = {XS:'#475569', S:'#0284C7', M:'#0D9488', L:'#D97706', XL:'#7C3AED'};
+
+  // keyword → simple cooking-method hint, used to build an instant (non-AI)
+  // "怎麼煮" reminder per day from the picked protein's name. Order matters:
+  // first matching keyword wins, so put more specific words first.
+  var PROTEIN_COOK_HINTS = [
+    {kw:['蛋'], verb:'煎或水煮'},
+    {kw:['雞'], verb:'煎、烤或滷'},
+    {kw:['鴨'], verb:'滷或烤'},
+    {kw:['牛'], verb:'快炒或煎'},
+    {kw:['豬','梅花','五花','後腿','培根','火腿','貢丸','香腸','絞肉'], verb:'炒或滷'},
+    {kw:['蝦'], verb:'炒或水煮汆燙'},
+    {kw:['花枝','透抽','中卷','魷魚','章魚'], verb:'快炒或汆燙'},
+    {kw:['蛤','蜆'], verb:'快炒或煮湯'},
+    {kw:['魚','鮭','鯖','虱目','午仔','鱈','鯛'], verb:'煎或蒸'},
+    {kw:['豆腐','百頁'], verb:'煎或滷'}
+  ];
+  function proteinCookVerb(name){
+    var s = String(name||'');
+    for(var i=0;i<PROTEIN_COOK_HINTS.length;i++){
+      var h = PROTEIN_COOK_HINTS[i];
+      for(var j=0;j<h.kw.length;j++){ if(s.indexOf(h.kw[j])!==-1) return h.verb; }
+    }
+    return '用喜歡的方式煮熟';
+  }
+
+  // instant, rule-based "做法提示" fallback (always available, no AI wait) — a
+  // generic assembly reminder built from the three picked items' own names, not
+  // a real recipe. Used as the default, and as the fallback when the optional
+  // AI tip (see exportMenuPoster) is skipped or fails.
+  function buildQuickCookTip(items){
+    var p = items.filter(function(it){ return it.label==='蛋白質'; })[0];
+    var v = items.filter(function(it){ return it.label==='蔬菜'; })[0];
+    var s = items.filter(function(it){ return it.label==='主食'; })[0];
+    if(!p && !v && !s) return '';
+    var parts = [];
+    if(p) parts.push(p.name+'（'+proteinCookVerb(p.name)+'）');
+    if(v) parts.push((v.spec||v.name)+'切好一起拌炒或燙熟');
+    if(s) parts.push('配'+s.name);
+    return parts.length ? (parts.join('，')+'即可。') : '';
+  }
+
+  function buildMenuPosterData(){
+    ensureMenuState();
+    var dm = buildDayMap();
+    var vegPool = getVegPool();
+    var activeTiers = MENU_TIERS.filter(function(t){ return state[t] > 0; });
+    var catTotals = {protein:0, veg:0, staple:0};
+    var grandTotal = 0, filledSlots = 0, totalSlots = 0;
+    var tiers = activeTiers.map(function(t){
+      var proteinPool = PROTEIN_POOLS[t] || [];
+      var days = [];
+      for(var ti=0; ti<state[t]; ti++){
+        totalSlots++;
+        var dayIdx = dm.offsets[t] + ti;
+        var pPicked = state.menu.protein[t][ti];
+        var vPicked = state.menu.veg[dayIdx];
+        var sPicked = state.menu.staple[dayIdx];
+        var pItem = (pPicked!==null && pPicked!==undefined) ? proteinPool[pPicked] : null;
+        var vItem = (vPicked!==null && vPicked!==undefined) ? vegPool[vPicked] : null;
+        var sItem = (sPicked!==null && sPicked!==undefined) ? STAPLE_POOL[sPicked] : null;
+        var pPrice = parsePriceNum(pItem && pItem.price);
+        var vPrice = parsePriceNum(vItem && vItem.price);
+        var sPrice = parsePriceNum(sItem && sItem.price);
+        var dayTotal = pPrice + vPrice + sPrice;
+        if(dayTotal > 0){ grandTotal += dayTotal; filledSlots++; }
+        catTotals.protein += pPrice; catTotals.veg += vPrice; catTotals.staple += sPrice;
+        // items carry both the picked name AND its buying spec (package weight/
+        // price for protein & staple, the actual ingredient breakdown for a veg
+        // combo) so the exported poster can double as a shopping list, not just
+        // show an opaque combo name like "快炒一鍋組合".
+        var items = [
+          pItem ? {label:'蛋白質', name:pItem.name, spec:pItem.spec||''} : null,
+          vItem ? {label:'蔬菜', name:vItem.name, spec:vItem.spec||''} : null,
+          sItem ? {label:'主食', name:sItem.name, spec:sItem.spec||''} : null
+        ].filter(Boolean);
+        days.push({
+          ti:ti, dayTotal:dayTotal, items:items,
+          tip: buildQuickCookTip(items)
+        });
+      }
+      return {tier:t, name:TIER_NAME[t], count:state[t], days:days};
+    });
+    return {bento:state.bento||0, tiers:tiers, totals:{grandTotal:grandTotal, filledSlots:filledSlots, totalSlots:totalSlots}};
+  }
+
+  // builds one bundled AI prompt covering every day slot in the poster, so the
+  // (optional, opt-in) AI-written tip only costs a single sample() call rather
+  // than one per day — asks for a JSON array of one-line tips, same order as
+  // the flattened day list passed in.
+  function buildPosterTipsPrompt(flatDays){
+    var lines = flatDays.map(function(d, i){
+      var desc = d.items.map(function(it){
+        return it.label+'：'+it.name+(it.spec ? '（'+it.spec+'）' : '');
+      }).join('；');
+      return (i+1)+'. '+(desc || '（沒有選任何食材）');
+    }).join('\n');
+    return '你是幫一個小家庭寫「備餐提醒卡」的助手。下面每一行是一份備好菜要用到的食材（蛋白質／蔬菜組合內容／主食，蔬菜組合內容已經是切配好的多種菜混合）。'+
+      '請針對「每一行」各給一句 15 到 30 個字、口語化、實用的「做法提示」，幫使用者到時候一看就記得大概要怎麼煮，不用寫詳細步驟、不要條列、不要提到營養學術語。'+
+      '用繁體中文回答，「只」回覆下面的 JSON 格式，陣列順序要跟輸入的編號一致，且長度要跟輸入的行數一樣多，不能省略任何一份：\n'+
+      '{"tips":["...", "...", ...]}\n\n'+
+      '食材清單：\n'+lines;
+  }
+
+  function posterRoundRect(ctx, x, y, w, h, r){
+    if(typeof ctx.roundRect==='function'){ ctx.beginPath(); ctx.roundRect(x,y,w,h,r); return; }
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  // shortens `text` with a trailing "…" until it fits maxWidth under ctx's current font —
+  // avoids needing a text-wrapping/measurement pre-pass, since every poster row is a
+  // single fixed-height line.
+  function posterTruncate(ctx, text, maxWidth){
+    if(ctx.measureText(text).width <= maxWidth) return text;
+    var lo = 0, hi = text.length;
+    while(lo < hi){
+      var mid = Math.ceil((lo+hi)/2);
+      var candidate = text.slice(0, mid) + '…';
+      if(ctx.measureText(candidate).width <= maxWidth){ lo = mid; } else { hi = mid-1; }
+    }
+    return text.slice(0, lo) + '…';
+  }
+
+  // a day row's height now depends on how much content it has (item breakdown
+  // lines + an optional tip line), so this mirrors the exact vertical offsets
+  // used inside drawMenuPoster's per-day drawing loop below — kept as one
+  // shared function so the pre-pass height sum can never drift out of sync
+  // with what's actually drawn.
+  function posterDayRowHeight(d){
+    var lineY = 40; // offset from the row's top to the first content line's baseline
+    if(!d.items.length){
+      lineY += 18; // single muted "尚未選擇" line
+    } else {
+      d.items.forEach(function(){ lineY += 18; });
+      if(d.tip) lineY += 20;
+    }
+    return lineY + 14; // bottom padding before the row divider / next row
+  }
+
+  function drawMenuPoster(data){
+    var W = 720, PAD = 32, CONTENT_W = W - PAD*2;
+    var HEADER_H=92, STATS_H=78, BENTO_H=32, TIER_HEADER_H=36, TIER_GAP=16, SECTION_GAP=18, FOOTER_H=46;
+    var hasBento = data.bento > 0;
+    var bodyH = 0;
+    data.tiers.forEach(function(t){
+      var tierH = TIER_HEADER_H;
+      t.days.forEach(function(d){ tierH += posterDayRowHeight(d); });
+      bodyH += tierH + TIER_GAP;
+    });
+    var totalH = PAD + HEADER_H + SECTION_GAP + STATS_H + SECTION_GAP +
+      (hasBento ? BENTO_H+SECTION_GAP : 0) + bodyH + FOOTER_H + PAD;
+
+    var scale = 2; // draw at 2x for a crisper exported PNG
+    var canvas = document.createElement('canvas');
+    canvas.width = W*scale; canvas.height = totalH*scale;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = '#FAF9F5';
+    ctx.fillRect(0, 0, W, totalH);
+
+    var cx = PAD, y = PAD;
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#0F172A';
+    ctx.font = '700 26px "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+    ctx.fillText('備餐菜單', cx, y+28);
+    ctx.font = '400 12.5px "Noto Sans TC","PingFang TC",sans-serif';
+    ctx.fillStyle = '#64748B';
+    var dateStr = new Date().toLocaleDateString('zh-TW', {year:'numeric', month:'long', day:'numeric'});
+    ctx.fillText('產生日期：'+dateStr, cx, y+50);
+    var grad = ctx.createLinearGradient(cx, 0, cx+CONTENT_W, 0);
+    grad.addColorStop(0, '#0D9488'); grad.addColorStop(1, '#E11D48');
+    ctx.fillStyle = grad;
+    ctx.fillRect(cx, y+64, CONTENT_W, 3);
+    y += HEADER_H;
+
+    posterRoundRect(ctx, cx, y, CONTENT_W, STATS_H-14, 14);
+    ctx.fillStyle = '#FFFFFF'; ctx.fill();
+    ctx.strokeStyle = '#E2E8F0'; ctx.lineWidth = 1; ctx.stroke();
+    var stats = [
+      {label:'已選 / 應排份數', value: data.totals.filledSlots+' / '+data.totals.totalSlots, accent:false},
+      {label:'實際選菜總計', value: '約 $'+Math.round(data.totals.grandTotal).toLocaleString('en-US'), accent:true},
+      {label:'平均每份', value: data.totals.filledSlots>0 ? ('約 $'+Math.round(data.totals.grandTotal/data.totals.filledSlots).toLocaleString('en-US')) : '—', accent:false}
+    ];
+    var colW = CONTENT_W/3;
+    stats.forEach(function(s, i){
+      var sx = cx + colW*i + 20;
+      ctx.font = '400 11px "Noto Sans TC",sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText(s.label, sx, y+24);
+      ctx.font = '700 18px "IBM Plex Mono",ui-monospace,monospace';
+      ctx.fillStyle = s.accent ? '#E11D48' : '#0F172A';
+      ctx.fillText(s.value, sx, y+48);
+    });
+    y += STATS_H;
+
+    if(hasBento){
+      ctx.font = '600 13px "Noto Sans TC",sans-serif';
+      ctx.fillStyle = '#115E59';
+      ctx.fillText('便當日　'+data.bento+' 天　·　外食或超商便當，不用選菜色', cx, y+18);
+      y += BENTO_H;
+    }
+
+    data.tiers.forEach(function(t){
+      posterRoundRect(ctx, cx, y+6, 12, 12, 4);
+      ctx.fillStyle = TIER_COLOR_HEX[t.tier] || '#0D9488';
+      ctx.fill();
+      ctx.font = '700 15px "Noto Sans TC",sans-serif';
+      ctx.fillStyle = '#0F172A';
+      ctx.fillText(t.name, cx+20, y+17);
+      var nameW = ctx.measureText(t.name).width;
+      ctx.font = '400 11.5px "Noto Sans TC",sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText(t.count+' 份', cx+20+nameW+8, y+17);
+      y += TIER_HEADER_H;
+
+      t.days.forEach(function(d){
+        var rowTop = y;
+        var rh = posterDayRowHeight(d);
+
+        // header line: "第N份" on the left, the day's total price on the right —
+        // the actual items move to their own lines below so each can carry its
+        // full buying detail (see the .spec breakdown lines) without fighting
+        // the price for width on one line.
+        ctx.font = '700 12.5px "IBM Plex Mono",ui-monospace,monospace';
+        ctx.fillStyle = '#64748B';
+        ctx.fillText('第'+(d.ti+1)+'份', cx, rowTop+18);
+
+        var priceText = d.dayTotal>0 ? ('約 $'+Math.round(d.dayTotal).toLocaleString('en-US')) : '';
+        if(priceText){
+          ctx.font = '700 13px "IBM Plex Mono",ui-monospace,monospace';
+          var priceW = ctx.measureText(priceText).width;
+          ctx.fillStyle = '#E11D48';
+          ctx.fillText(priceText, cx+CONTENT_W-priceW, rowTop+18);
+        }
+
+        var indent = cx + 14;
+        var lineMaxW = CONTENT_W - 14;
+        var lineY = rowTop + 40;
+
+        if(!d.items.length){
+          ctx.font = '400 13px "Noto Sans TC",sans-serif';
+          ctx.fillStyle = '#94A3B8';
+          ctx.fillText('尚未選擇', indent, lineY);
+          lineY += 18;
+        } else {
+          // one line per picked item: "蛋白質：醃雞丁　250g／90 元，買 2 包＝500g"
+          // — for a veg combo, .spec is the actual ingredient breakdown (not just
+          // the combo's own name), so this line doubles as a shopping list entry.
+          d.items.forEach(function(it){
+            var text = it.label+'：'+it.name+(it.spec ? '　'+it.spec : '');
+            ctx.font = '400 12.5px "Noto Sans TC",sans-serif';
+            ctx.fillStyle = '#334155';
+            ctx.fillText(posterTruncate(ctx, text, lineMaxW), indent, lineY);
+            lineY += 18;
+          });
+          if(d.tip){
+            var tipText = '做法：'+d.tip;
+            ctx.font = '400 12px "Noto Sans TC",sans-serif';
+            ctx.fillStyle = '#0D9488';
+            ctx.fillText(posterTruncate(ctx, tipText, lineMaxW), indent, lineY);
+            lineY += 20;
+          }
+        }
+
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx, rowTop+rh-6);
+        ctx.lineTo(cx+CONTENT_W, rowTop+rh-6);
+        ctx.stroke();
+
+        y += rh;
+      });
+      y += TIER_GAP;
+    });
+
+    ctx.textAlign = 'center';
+    ctx.font = '400 11px "Noto Sans TC",sans-serif';
+    ctx.fillStyle = '#94A3B8';
+    ctx.fillText('備餐分級手冊．僅供備餐預算規劃參考', W/2, totalH-PAD+8);
+    ctx.textAlign = 'left';
+
+    return canvas;
+  }
+
+  var posterAiTipToggle = el('posterAiTipToggle');
+
+  // `note` (optional) is prepended to the final success message — used so that
+  // when the optional AI tip step below fails and silently falls back to the
+  // instant rule-based tips, the user still sees that it happened instead of
+  // the fallback note getting overwritten by the plain "已匯出" message.
+  function drawAndSavePoster(data, note){
+    var prefix = note ? note+' ' : '';
+    var canvas;
+    try{
+      canvas = drawMenuPoster(data);
+    }catch(e){
+      showPlanMsg(prefix+'產生圖片失敗，請再試一次。', true);
+      return;
+    }
+    canvas.toBlob(function(blob){
+      if(!blob){ showPlanMsg(prefix+'產生圖片失敗，請再試一次。', true); return; }
+      var filename = '備餐菜單_'+Date.now()+'.png';
+      claudeCapability('downloads').then(function(downloads){
+        if(downloads){
+          return downloads.save({filename:filename, data:blob}).then(function(){
+            showPlanMsg(prefix+'已匯出菜單圖片。');
+          });
+        }
+        // no platform downloads capability (not logged in, or the platform bridge
+        // isn't reaching this browser) — fall back to a plain browser download,
+        // which needs neither login nor that bridge.
+        if(browserDownloadBlob(blob, filename, 'image/png')){
+          showPlanMsg(prefix+'已匯出菜單圖片（用瀏覽器下載）。');
+        } else {
+          showPlanMsg(prefix+'這個瀏覽器無法自動下載圖片，請換個瀏覽器再試一次。', true);
+        }
+      }).catch(function(e){
+        if(e && e.code==='declined') return;
+        if(browserDownloadBlob(blob, filename, 'image/png')){
+          showPlanMsg(prefix+'已匯出菜單圖片（用瀏覽器下載）。');
+        } else {
+          showPlanMsg(prefix+'輸出圖片失敗，請稍後再試。', true);
+        }
+      });
+    }, 'image/png');
+  }
+
+  function exportMenuPoster(){
+    var hasAnyTier = MENU_TIERS.some(function(t){ return state[t] > 0; });
+    if(!hasAnyTier){
+      showPlanMsg('「試算」目前還沒有排任何煮飯天，沒有東西可以輸出成菜單圖片。', true);
+      return;
+    }
+    var useAiTips = !!(posterAiTipToggle && posterAiTipToggle.checked);
+    if(menuExportImgBtn) menuExportImgBtn.disabled = true;
+
+    // wait for the page's own web fonts (Noto Sans TC / IBM Plex Mono, already linked
+    // in <head>) to finish loading before drawing to canvas, so the exported image uses
+    // the intended typeface rather than whatever generic font the browser falls back to
+    // if this is clicked in the first moment after the page loads. document.fonts may be
+    // unavailable in older embedding contexts — draw immediately in that case.
+    var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    fontsReady.catch(function(){}).then(function(){
+      // buildMenuPosterData() already fills every day's `.tip` with the instant,
+      // rule-based reminder (see buildQuickCookTip) — that's what gets drawn
+      // whether or not the AI option below is used, unless it's successfully
+      // overwritten with an AI-written tip first.
+      var data = buildMenuPosterData();
+      if(!useAiTips){
+        drawAndSavePoster(data);
+        if(menuExportImgBtn) menuExportImgBtn.disabled = false;
+        return;
+      }
+
+      showPlanMsg('AI 生成做法提示中，請稍候…（約 10–30 秒，之後才會開始存圖片）');
+      var flatDays = [];
+      data.tiers.forEach(function(t){ t.days.forEach(function(d){ flatDays.push(d); }); });
+
+      // if the AI step below can't run or fails, fall back to the rule-based tips
+      // already filled in by buildMenuPosterData() and still export the poster —
+      // fallbackNote carries *why* into the final message (via drawAndSavePoster)
+      // instead of being shown and then immediately overwritten by "已匯出菜單圖片".
+      var fallbackNote = '';
+      getAiSample().then(function(sample){
+        if(!sample){
+          fallbackNote = '這個檢視模式無法使用 AI，已改用簡易做法提示。';
+          return;
+        }
+        if(!flatDays.length) return;
+        var prompt = buildPosterTipsPrompt(flatDays);
+        return sample.json(prompt, {modelTier:'default', cache:false}).then(function(resp){
+          if(resp && Array.isArray(resp.tips)){
+            flatDays.forEach(function(d, i){
+              if(typeof resp.tips[i]==='string' && resp.tips[i].trim()) d.tip = resp.tips[i].trim();
+            });
+          }
+        });
+      }).catch(function(e){
+        var code = e && e.code;
+        if(code!=='cancelled'){
+          var baseMsg = (code && AI_ERROR_COPY[code]) || 'AI 做法提示產生失敗，';
+          fallbackNote = baseMsg+'已改用簡易做法提示。';
+          var debugDetail = formatAiDebugDetail(e);
+          if(debugDetail) fallbackNote += '　' + debugDetail;
+        }
+      }).then(function(){
+        drawAndSavePoster(data, fallbackNote);
+      }).then(function(){
+        if(menuExportImgBtn) menuExportImgBtn.disabled = false;
+      });
+    });
+  }
+
+  var menuExportImgBtn = el('menuExportImgBtn');
+  if(menuExportImgBtn){
+    menuExportImgBtn.addEventListener('click', exportMenuPoster);
+  }
+  // AI-tip toggle row's visibility is kept in sync by refreshAiAvailability()
+  // (called on load and whenever the viewer saves/clears their own OpenAI key),
+  // so nothing to do here.
+
+  renderPlanList();
+
+  // ---- AI recipe suggestion (排菜 section: AI 食譜靈感) ----
+  // Reads individual vegetable items straight from the 蔬菜單價表 (not the combo
+  // cards) so the AI can mix-and-match freely, same spirit as the protein/staple pools.
+  function buildVegItemPool(){
+    var rows = document.querySelectorAll('#vegItemsBody tr');
+    return Array.prototype.map.call(rows, function(row){
+      return {
+        name: row.getAttribute('data-name') || '',
+        price: Number(row.getAttribute('data-price')) || 0,
+        cat: row.getAttribute('data-cat') || ''
+      };
+    }).filter(function(it){ return it.name; });
+  }
+
+  // caps how many past dish names we remember per keyword, purely in memory (not
+  // persisted) — just enough to tell the AI "don't repeat these" on the next click
+  // of 生成建議 for the same keyword, without growing unbounded over a long session.
+  var RECIPE_HISTORY_CAP = 8;
+  var recipeHistory = {};
+
+  function rememberRecipeHistory(keyword, dishNames){
+    var key = String(keyword).trim();
+    if(!key) return;
+    var arr = recipeHistory[key] || [];
+    dishNames.forEach(function(name){
+      if(name && arr.indexOf(name)===-1) arr.push(name);
+    });
+    if(arr.length > RECIPE_HISTORY_CAP) arr = arr.slice(arr.length - RECIPE_HISTORY_CAP);
+    recipeHistory[key] = arr;
+  }
+
+  function buildRecipePrompt(keyword){
+    var proteinLines = [];
+    MENU_TIERS.forEach(function(t){
+      (PROTEIN_POOLS[t]||[]).forEach(function(it){
+        if(it.name) proteinLines.push('['+TIER_NAME[t]+'] '+it.name+'（'+it.spec+'，'+it.price+'）');
+      });
+    });
+    var vegLines = buildVegItemPool().map(function(it){ return it.name+'（約 '+it.price+' 元）'; });
+    var stapleLines = STAPLE_POOL.map(function(it){ return it.name+(it.spec?'（'+it.spec+'）':''); }).filter(Boolean);
+
+    var avoidList = recipeHistory[String(keyword).trim()] || [];
+    var avoidNote = avoidList.length
+      ? '\n\n使用者針對同一個關鍵字，剛剛已經看過這些建議了：'+avoidList.join('、')+'。這次請提供不同的菜名、不同的蛋白質組合或不同的做法風格，不要重複上面這些。\n'
+      : '';
+
+    return '你是台灣一個兩人家庭的備餐助理，使用者正在規劃兩週的餐點，想吃「'+keyword+'」這道菜／這個主題。\n\n'+
+      '下面三份清單裡，每一行最前面的「品名」欄位才是你可以選的食材（蛋白質那份清單每行開頭還多了 [分級] 標籤跟後面的規格、價格，那些只是給你參考，不是品名的一部分）。'+
+      '請只從清單裡挑食材：\n\n'+
+      '【蛋白質清單】格式：[分級] 品名（規格，價格）——JSON 裡只能填「品名」兩個字對應的文字，不要把 [分級] 或後面括號裡的規格、價格也一起複製進去\n'+(proteinLines.join('\n')||'（清單是空的）')+'\n\n'+
+      '【蔬菜清單】格式：品名（約 X 元）——JSON 裡只能填「品名」，不要把後面的價格一起複製進去\n'+(vegLines.join('\n')||'（清單是空的）')+'\n\n'+
+      '【主食清單】格式：品名（規格）——JSON 裡只能填「品名」，不要把後面括號裡的規格一起複製進去。不是每道菜都需要主食，覺得不需要可以留空陣列\n'+(stapleLines.join('\n')||'（清單是空的）')+'\n\n'+
+      '舉例：清單裡寫「[標準均衡] 雞腿肉（冷氣雞）（220g／130 元，買 2 包＝440g，260 元）」，你在 JSON 裡只能填 "雞腿肉（冷氣雞）"，不能填 "[標準均衡] 雞腿肉（冷氣雞）（220g／130 元，買 2 包＝440g，260 元）"。\n\n'+
+      '請提供 2 到 3 種「'+keyword+'」的不同做法或風格版本（例如清爽版、重口味版、快炒版、湯品版……依這道菜本身合理發揮，版本之間要有實際差異，不要硬湊兩個很像的），每個版本盡量豐富：\n'+
+      '- protein：同一版本內列 2～3 個「可以互相替代」的蛋白質選項（不同分級各挑一個類似做法的品項，使用者會自己選一個來用，不是全部一起用）；這道菜真的只適合某一種就列一個，不用硬湊\n'+
+      '- vegetables／staples：從清單挑合適的搭配，主食不是必要\n'+
+      '- method：3到5句話，包含前處理、烹調順序、大概需要的時間，份量抓兩人份（相當於4份標準份量）\n'+
+      '- texture：一句話描述吃起來的口感或風味（例如「清爽不油膩」「湯頭濃郁」「外酥內嫩」）\n'+
+      '- notes：份量拿捏、替代做法等提醒，沒有就給空字串\n'+
+      avoidNote+'\n'+
+      '只回覆一個 JSON 物件，繁體中文，不要有其他文字、不要加 code fence，格式如下：\n'+
+      '{"variations":[{"dish":"這個版本的菜名","style":"這個版本的風格標籤，4個字以內，例如：清爽版、快炒版","protein":["只填品名，2到3個不同分級的替代選項"],"vegetables":["只填品名，可多選"],"staples":["只填品名，0到多個"],'+
+      '"cookTime":"約 X 分鐘","texture":"一句話口感／風味描述","method":"3到5句話的做法說明","notes":"提醒事項，沒有就給空字串"}]}';
+  }
+
+  // matches an AI-returned name against the real pool. Tries an exact match first;
+  // if that fails, falls back to checking whether a pool item's name appears verbatim
+  // inside the returned string — this recovers cases where the AI echoed the whole
+  // prompt line (tier tag + spec + price) instead of just the bare name, which the
+  // prompt above explicitly asks it not to do but doesn't always avoid. Prefers the
+  // longest matching pool name when more than one could match as a substring.
+  function matchByName(name, pool){
+    var s = String(name).trim();
+    for(var i=0;i<pool.length;i++){ if(pool[i].name===s) return pool[i]; }
+    var best = null;
+    pool.forEach(function(it){
+      if(it.name && s.indexOf(it.name) !== -1){
+        if(!best || it.name.length > best.name.length) best = it;
+      }
+    });
+    return best;
+  }
+
+  function aiChipRow(label, items, tagFn){
+    if(!items.length) return '';
+    var chips = items.map(function(it){
+      var tag = tagFn ? tagFn(it) : '';
+      return '<span class="ar-chip">'+escapeHtml(it.name)+tag+'</span>';
+    }).join('');
+    return '<div class="ar-group"><div class="ar-group-label">'+label+'</div><div class="ar-chip-row">'+chips+'</div></div>';
+  }
+
+  // protein chips are clickable/selectable (unlike the veg/staple chips, which are just
+  // informational) — when the AI suggests more than one matched protein (e.g. alternates
+  // across different price tiers for the same dish), the viewer picks which one "加入排菜"
+  // should actually apply. selectedIdx marks the one currently highlighted; vIdx scopes
+  // the data-* attributes to the right variation card when several are shown at once.
+  function proteinChipRow(items, selectedIdx, vIdx){
+    if(!items.length) return '';
+    var chips = items.map(function(it, idx){
+      var tag = '<span class="ar-chip-tag">['+TIER_NAME[it.tier]+']</span>';
+      var sel = idx===selectedIdx ? ' is-selected' : '';
+      return '<button type="button" class="ar-chip ar-chip-pick'+sel+'" data-vidx="'+vIdx+'" data-idx="'+idx+'" aria-pressed="'+(idx===selectedIdx)+'">'+escapeHtml(it.name)+tag+'</button>';
+    }).join('');
+    var hint = items.length>1 ? '<div class="ar-chip-hint">點一下可切換要套用哪一個</div>' : '';
+    return '<div class="ar-group"><div class="ar-group-label">蛋白質</div><div class="ar-chip-row">'+chips+'</div>'+hint+'</div>';
+  }
+
+  // holds each successfully-rendered variation's matched item objects, indexed the same
+  // as the variation cards on screen, so each card's own "加入排菜" button (rebuilt into
+  // aiRecipeResult's innerHTML on every suggestion) has something to apply. Each entry's
+  // selectedProteinIdx tracks which protein chip the viewer currently has picked in that card.
+  var lastRecipeVariations = [];
+
+  function matchIngredients(data, proteinPool, vegPool, staplePool){
+    var matchedProtein=[], matchedVeg=[], matchedStaple=[], unmatched=[];
+    (Array.isArray(data.protein)?data.protein:[]).forEach(function(n){
+      var m = matchByName(String(n).trim(), proteinPool);
+      if(m) matchedProtein.push(m); else unmatched.push(n);
+    });
+    (Array.isArray(data.vegetables)?data.vegetables:[]).forEach(function(n){
+      var m = matchByName(String(n).trim(), vegPool);
+      if(m) matchedVeg.push(m); else unmatched.push(n);
+    });
+    (Array.isArray(data.staples)?data.staples:[]).forEach(function(n){
+      var m = matchByName(String(n).trim(), staplePool);
+      if(m) matchedStaple.push(m); else unmatched.push(n);
+    });
+    return {matchedProtein:matchedProtein, matchedVeg:matchedVeg, matchedStaple:matchedStaple, unmatched:unmatched};
+  }
+
+  function renderVariationCard(data, keyword, vIdx){
+    var proteinPool = [];
+    MENU_TIERS.forEach(function(t){ (PROTEIN_POOLS[t]||[]).forEach(function(it){ proteinPool.push(Object.assign({tier:t}, it)); }); });
+    var vegPool = buildVegItemPool();
+    var staplePool = STAPLE_POOL;
+
+    var m = matchIngredients(data, proteinPool, vegPool, staplePool);
+    var dishName = (data.dish ? String(data.dish).trim() : '') || keyword;
+    lastRecipeVariations[vIdx] = {
+      dish:dishName, matchedProtein:m.matchedProtein, matchedVeg:m.matchedVeg,
+      matchedStaple:m.matchedStaple, selectedProteinIdx:0
+    };
+
+    var html = '<div class="ar-dish">'+escapeHtml(dishName)+
+      (data.style ? '<span class="ar-style-tag">'+escapeHtml(String(data.style))+'</span>' : '')+'</div>';
+
+    var metaParts = [];
+    if(data.cookTime) metaParts.push(escapeHtml(String(data.cookTime)));
+    if(data.texture) metaParts.push(escapeHtml(String(data.texture)));
+    if(metaParts.length) html += '<div class="ar-meta">'+metaParts.join('　·　')+'</div>';
+
+    html += proteinChipRow(m.matchedProtein, 0, vIdx);
+    html += aiChipRow('蔬菜', m.matchedVeg, function(it){ return '<span class="ar-chip-price">約 '+it.price+' 元</span>'; });
+    html += aiChipRow('主食', m.matchedStaple, function(it){ return it.spec ? '<span class="ar-chip-tag">'+escapeHtml(it.spec)+'</span>' : ''; });
+
+    if(data.method){
+      html += '<div class="ar-method">'+escapeHtml(String(data.method))+'</div>';
+    }
+
+    var noteParts = [];
+    if(data.notes){ noteParts.push(escapeHtml(String(data.notes))); }
+    if(m.unmatched.length){
+      noteParts.push('AI 提到但清單裡找不到、已略過：'+m.unmatched.map(function(n){ return escapeHtml(String(n)); }).join('、'));
+    }
+    if(noteParts.length){
+      html += '<div class="ar-note">'+noteParts.join('<br>')+'</div>';
+    }
+
+    if(m.matchedProtein.length || m.matchedVeg.length || m.matchedStaple.length){
+      html += '<div class="ar-apply-row"><button type="button" class="builder-btn ar-apply-btn" data-vidx="'+vIdx+'">加入排菜</button>'+
+        '<span class="ar-apply-msg" data-vidx="'+vIdx+'" hidden></span></div>';
+    }
+
+    return '<div class="ar-variation">'+html+'</div>';
+  }
+
+  function renderRecipeResult(data, keyword){
+    var result = el('aiRecipeResult');
+    if(!result) return;
+    lastRecipeVariations = [];
+
+    var variations = Array.isArray(data.variations) ? data.variations : null;
+    // defensive fallback: if the AI ignored the multi-variation schema and returned
+    // the old flat single-dish shape instead, treat it as one variation rather than
+    // failing outright.
+    if(!variations || !variations.length) variations = [data];
+
+    var html = variations.map(function(v, i){ return renderVariationCard(v || {}, keyword, i); }).join('');
+    result.innerHTML = html;
+    result.hidden = false;
+
+    rememberRecipeHistory(keyword, lastRecipeVariations.map(function(v){ return v.dish; }));
+  }
+
+  // finds the first day slot in `tier` that has no protein, veg, or staple picked yet
+  // (never overwrites a slot the viewer has already started filling in); returns
+  // {ti, dayIdx} or null when the tier has no days at all, or every day is already used.
+  function findEmptyDaySlot(tier){
+    ensureMenuState();
+    var count = state[tier] || 0;
+    if(count<=0) return null;
+    var dm = buildDayMap();
+    var offset = dm.offsets[tier];
+    for(var ti=0; ti<count; ti++){
+      var dayIdx = offset+ti;
+      var p = state.menu.protein[tier] ? state.menu.protein[tier][ti] : null;
+      var v = state.menu.veg[dayIdx];
+      var s = state.menu.staple[dayIdx];
+      var isEmpty = (p===null||p===undefined) && (v===null||v===undefined) && (s===null||s===undefined);
+      if(isEmpty) return {ti:ti, dayIdx:dayIdx};
+    }
+    return null;
+  }
+
+  // when no AI-suggested protein matched a real item, there's no tier to anchor on
+  // by price bracket alone — instead walk the active tiers in order (XS→XL) and use
+  // the first one that still has an empty day, so the veg/staple can still be applied.
+  function findEmptyDaySlotAnyTier(){
+    for(var i=0;i<MENU_TIERS.length;i++){
+      var t = MENU_TIERS[i];
+      if((state[t]||0)<=0) continue;
+      var slot = findEmptyDaySlot(t);
+      if(slot) return {tier:t, ti:slot.ti, dayIdx:slot.dayIdx};
+    }
+    return null;
+  }
+
+  function applyRecipeToMenu(vIdx){
+    var recipeResult = lastRecipeVariations[vIdx];
+    if(!recipeResult) return;
+    var mp = recipeResult.matchedProtein, mv = recipeResult.matchedVeg, ms = recipeResult.matchedStaple;
+    var applyMsg = document.querySelector('.ar-apply-msg[data-vidx="'+vIdx+'"]');
+    function showApplyMsg(text, isError){
+      if(!applyMsg) return;
+      applyMsg.textContent = text || '';
+      applyMsg.hidden = !text;
+      applyMsg.classList.toggle('is-error', !!isError);
+    }
+    if(!mp.length && !mv.length && !ms.length){ showApplyMsg('沒有比對到任何品項，沒辦法加入。', true); return; }
+
+    // the viewer may have clicked a different protein chip than the first one — respect
+    // that choice (clamped defensively in case the result list ever shrinks underneath it)
+    var selIdx = recipeResult.selectedProteinIdx || 0;
+    if(selIdx<0 || selIdx>=mp.length) selIdx = 0;
+    var chosenProtein = mp.length ? mp[selIdx] : null;
+
+    var tier, slot;
+    if(chosenProtein){
+      tier = chosenProtein.tier;
+      slot = findEmptyDaySlot(tier);
+      if(!slot){
+        showApplyMsg('「'+TIER_NAME[tier]+'」目前沒有空的煮飯天可以加入，請先到「試算」增加天數，或清空下面一天再套用；也可以點另一個蛋白質選項試試別的分級。', true);
+        return;
+      }
+    } else {
+      var any = findEmptyDaySlotAnyTier();
+      if(!any){
+        showApplyMsg('目前沒有空的煮飯天可以加入，請先到「試算」增加天數，或清空下面一天再套用。', true);
+        return;
+      }
+      tier = any.tier; slot = {ti:any.ti, dayIdx:any.dayIdx};
+    }
+
+    ensureMenuState();
+
+    var proteinOk = false;
+    if(chosenProtein){
+      var proteinIdx = -1;
+      (PROTEIN_POOLS[tier]||[]).forEach(function(it,i){ if(it.name===chosenProtein.name) proteinIdx = i; });
+      if(proteinIdx===-1){ showApplyMsg('加入失敗，請重新生成一次建議。', true); return; }
+      state.menu.protein[tier][slot.ti] = proteinIdx;
+      proteinOk = true;
+    }
+
+    if(mv.length){
+      var vegNames = mv.map(function(it){ return it.name; });
+      var comboName = 'AI：'+recipeResult.dish;
+      var comboIdx = (typeof window.upsertAiCombo==='function') ? window.upsertAiCombo(comboName, vegNames) : -1;
+      if(comboIdx>=0){ state.menu.veg[slot.dayIdx] = comboIdx; }
+    }
+    if(ms.length){
+      var stapleIdx = STAPLE_POOL.indexOf(ms[0]);
+      if(stapleIdx>=0){ state.menu.staple[slot.dayIdx] = stapleIdx; }
+    }
+
+    render();
+    if(proteinOk){
+      showApplyMsg('已加入「'+TIER_NAME[tier]+'」的第 '+(slot.ti+1)+' 份。');
+    } else {
+      showApplyMsg('AI 建議的蛋白質在清單裡找不到，已先把蔬菜'+(ms.length?'、主食':'')+'加入「'+TIER_NAME[tier]+'」的第 '+(slot.ti+1)+' 份，蛋白質請自行在下面補選。');
+    }
+  }
+
+  var aiRecipeInput = el('aiRecipeInput');
+  var aiRecipeBtn = el('aiRecipeBtn');
+  var aiRecipeMsg = el('aiRecipeMsg');
+  var aiRecipeResult = el('aiRecipeResult');
+  var aiRecipePanel = el('aiRecipePanel');
+
+  function showAiMsg(text, isError){
+    if(!aiRecipeMsg) return;
+    aiRecipeMsg.textContent = text || '';
+    aiRecipeMsg.hidden = !text;
+    aiRecipeMsg.classList.toggle('is-error', !!isError);
+  }
+
+  var AI_ERROR_COPY = {
+    not_granted:'你婉拒了這個頁面使用 AI 的授權，暫時無法產生建議。',
+    sampling_disabled:'這個帳號目前無法使用 AI 功能。',
+    rate_limited:'AI 請求太頻繁了，等一下再試一次。',
+    session_expired:'請重新登入後再試一次。',
+    invalid_json:'AI 回覆的格式看不懂，換個說法再試一次。',
+    refused:'AI 婉拒了這個請求，換個說法再試試看。',
+    empty_completion:'AI 沒有給出內容，請換個關鍵字再試一次。',
+    prompt_too_large:'目前的品項清單太長，AI 讀不完，請先精簡清單再試。',
+    not_declared:'這個頁面還沒開啟 AI 功能。',
+    capability_disabled:'這個檢視模式無法使用 AI 功能。',
+    capability_removed:'這個檢視模式無法使用 AI 功能。',
+    openai_unauthorized:'這組 OpenAI 金鑰無效或已失效，請到「AI 設定」確認金鑰是否正確。',
+    openai_error:'OpenAI 服務目前發生問題，請稍後再試一次。',
+    proxy_unreachable:'連不到轉發用的 Cloudflare Worker，請打開瀏覽器開發者工具的 Console／Network 分頁確認實際錯誤（常見原因：CORS、這個頁面本身的安全限制、Worker 網址打錯或沒在運作、網路離線）。'
+  };
+
+  // OpenAI's own "invalid_api_key" error message sometimes echoes back a
+  // masked fragment of the offending key for the caller's own recognition
+  // (e.g. "Incorrect API key provided: sk-THIS***c123") — that's on OpenAI's
+  // side, not something this page adds, but since no key material at all
+  // should reach the screen, defensively strip anything shaped like a key
+  // out of any text pulled from OpenAI's response before it's ever displayed.
+  function redactKeyLike(text){
+    if(!text) return text;
+    return String(text).replace(/sk-[A-Za-z0-9*_-]{4,}/g, '［已隱藏的金鑰片段］');
+  }
+
+  // TEMPORARY DEBUG HELPER (requested by mika to diagnose a BYOK setup issue —
+  // safe to delete this whole function, and its two call sites below, once
+  // resolved): turns the diagnostic fields openAiSample() attaches to its
+  // rejection (see the "TEMPORARY DEBUG" comment there) into one line of text
+  // appended after the normal canned error message, so the viewer can see the
+  // real HTTP status and OpenAI's own error type/message without opening
+  // DevTools. Deliberately only reads e.status / e.detail / e.openaiErrorType /
+  // e.openaiErrorCode — those are populated purely from OpenAI's response
+  // status and response BODY, never from the request the page itself sent, so
+  // the full API key can never appear here; e.detail still goes through
+  // redactKeyLike() as a second layer of defense against OpenAI's own masked
+  // fragment described above.
+  function formatAiDebugDetail(e){
+    if(!e || (typeof e.status==='undefined' && !e.detail && !e.openaiErrorType)) return '';
+    var parts = [];
+    parts.push('HTTP ' + (typeof e.status!=='undefined' ? e.status : '?'));
+    if(e.openaiErrorType) parts.push('type=' + e.openaiErrorType);
+    if(e.openaiErrorCode) parts.push('code=' + e.openaiErrorCode);
+    parts.push('message=' + redactKeyLike(e.detail || '(OpenAI 沒有回傳訊息內容)'));
+    return '［除錯用，之後會拿掉］' + parts.join('，');
+  }
+
+  if(aiRecipeInput){
+    aiRecipeInput.addEventListener('input', function(){ aiRecipeInput.classList.remove('is-invalid'); });
+  }
+
+  // the apply button is rebuilt into aiRecipeResult's innerHTML on every suggestion,
+  // so it's wired once here via delegation rather than re-queried after each render
+  if(aiRecipeResult){
+    aiRecipeResult.addEventListener('click', function(e){
+      var applyBtn = e.target.closest ? e.target.closest('.ar-apply-btn') : null;
+      if(applyBtn){
+        var vIdxApply = parseInt(applyBtn.getAttribute('data-vidx'), 10);
+        if(!isNaN(vIdxApply)) applyRecipeToMenu(vIdxApply);
+        return;
+      }
+      var pickBtn = e.target.closest ? e.target.closest('.ar-chip-pick') : null;
+      if(pickBtn){
+        var vIdx = parseInt(pickBtn.getAttribute('data-vidx'), 10);
+        var idx = parseInt(pickBtn.getAttribute('data-idx'), 10);
+        if(isNaN(vIdx) || isNaN(idx) || !lastRecipeVariations[vIdx]) return;
+        lastRecipeVariations[vIdx].selectedProteinIdx = idx;
+        var row = pickBtn.closest('.ar-chip-row');
+        if(row){
+          Array.prototype.slice.call(row.querySelectorAll('.ar-chip-pick')).forEach(function(chip){
+            var isSel = chip===pickBtn;
+            chip.classList.toggle('is-selected', isSel);
+            chip.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+          });
+        }
+        var applyMsg = document.querySelector('.ar-apply-msg[data-vidx="'+vIdx+'"]');
+        if(applyMsg){ applyMsg.hidden = true; applyMsg.textContent = ''; }
+      }
+    });
+  }
+
+  if(aiRecipeBtn){
+    aiRecipeBtn.addEventListener('click', function(){
+      var keyword = aiRecipeInput ? aiRecipeInput.value.trim() : '';
+      if(!keyword){
+        if(aiRecipeInput){ aiRecipeInput.classList.add('is-invalid'); aiRecipeInput.focus(); }
+        return;
+      }
+      if(aiRecipeResult) aiRecipeResult.hidden = true;
+      aiRecipeBtn.disabled = true;
+      aiRecipeBtn.classList.add('ai-btn-loading');
+      showAiMsg('AI 想菜色中，請稍候…（一次生成多個版本，通常 10–40 秒）');
+
+      getAiSample().then(function(sample){
+        if(!sample){
+          showAiMsg('AI 功能目前無法使用，請到上方「AI 設定」貼上你自己的 OpenAI 金鑰，或用有權限的 claude.ai 帳號開啟這個頁面。', true);
+          return null;
+        }
+        var prompt = buildRecipePrompt(keyword);
+        return sample.json(prompt, {modelTier:'default', cache:false}).then(function(data){
+          if(!data || typeof data!=='object'){
+            showAiMsg('AI 回覆的格式看不懂，請換個關鍵字再試一次。', true);
+            return;
+          }
+          renderRecipeResult(data, keyword);
+          showAiMsg('');
+        });
+      }).catch(function(e){
+        var code = e && e.code;
+        if(code==='cancelled'){ showAiMsg(''); return; }
+        var msg = (code && AI_ERROR_COPY[code]) || '生成失敗，請稍後再試一次。';
+        var debugDetail = formatAiDebugDetail(e);
+        if(debugDetail) msg += '　' + debugDetail;
+        showAiMsg(msg, true);
+      }).then(function(){
+        aiRecipeBtn.disabled = false;
+        aiRecipeBtn.classList.remove('ai-btn-loading');
+      });
+    });
+  }
+
+  // aiRecipePanel's visibility is kept in sync by refreshAiAvailability() (called
+  // on load and whenever the viewer saves/clears their own OpenAI key), so nothing
+  // to do here.
+
+  syncToggleUI();
+  render();
+})();
+</script>
