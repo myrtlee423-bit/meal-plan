@@ -2489,7 +2489,11 @@
   // can call it directly from the browser with just an API key — no relay
   // server needed.
   var GEMINI_KEY_STORAGE = 'mealPlanGeminiKey_v1';
-  var GEMINI_MODEL = 'gemini-3.8-flash';
+  // "flash-lite" is Google's smallest/cheapest tier — plenty for short JSON
+  // recipe suggestions, and being less popular than the flagship "flash"
+  // model it tends to hit far fewer "currently experiencing high demand"
+  // 503s on the free tier.
+  var GEMINI_MODEL = 'gemini-3.5-flash-lite';
   var GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent';
 
   function getGeminiKey(){
